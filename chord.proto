@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+service RegistryService{
+    rpc RegistryRegister(RegisterMessage) returns (RegisterMessageResponse);
+    rpc RegistryDeregister(DeregisterMessage) returns (DeregisterMessageResponse);
+    rpc RegistryGetChordInfo(GetChordInfoMessage) returns (GetChordInfoMessageResponse);
+}
+
+//register
+message RegisterMessage{
+    string ipaddr = 1;
+    string port = 2;
+}
+message RegisterMessageResponse{
+    bool success = 1;
+    int32 id = 2;
+    int32 m = 3;
+}
+
+//deregister
+message DeregisterMessage{
+    int32 id = 1;
+}
+message DeregisterMessageResponse{
+    bool success = 1;
+    string message = 2;
+}
+
+//get_chord_info
+message GetChordInfoMessage{}
+message GetChordInfoMessageResponse{
+    map<int32,string> chord_info = 1;
+}
+
+
+
+service NodeService{
+    rpc NodeGetFingerTable(GetFingerTableMessage) returns (GetFingerTableMessageResponse);
+    rpc NodeSave(SaveMessage) returns (SaveMessageResponse);
+    rpc NodeRemove(RemoveMessage) returns (RemoveMessageResponse);
+    rpc NodeFind(FindMessage) returns (FindMessageResponse);
+}
+
+//get_finger_table
+message GetFingerTableMessage{}
+message GetFingerTableMessageResponse{
+    map<int32,string> finger_table = 1;
+}
+
+//save
+message SaveMessage{
+    string key = 1;
+    string text = 2; 
+}
+message SaveMessageResponse{
+    bool success = 1;
+    int32 id = 2;
+    string message = 3;
+}
+
+//remove
+message RemoveMessage{
+    string key = 1;
+}
+message RemoveMessageResponse{
+    bool success = 1;
+    int32 id = 2;
+    string message = 3;
+}
+
+//find
+message FindMessage{
+    string text = 1;
+}
+message FindMessageResponse{
+    bool success = 1;
+    int32 id = 2;
+    string message = 3;
+    string ipaddr = 4;
+    string port = 5;
+}
