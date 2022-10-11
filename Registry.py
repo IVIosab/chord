@@ -1,8 +1,11 @@
 import random
+
+import chord_pb2_grpc
 import chord_pb2_grpc as pb2_grpc
 import chord_pb2 as pb2
 import grpc
 import sys
+from concurrent import futures
 
 random.seed(0)
 print(random.random())
@@ -101,4 +104,11 @@ class Handler(pb2_grpc.RegistryServiceServicer):
 
 
 if __name__ == "__main__":
-    print("something")
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    chord_pb2_grpc.add_GreeterServicer_to_server(Handler(), server)
+    server.add_insecure_port(f'{REGISTRY_HOST}:{REGISTRY_PORT}')
+    server.start()
+    try:
+        server.wait_for_termination()
+    except KeyboardInterrupt:
+        print("Registry shutting down")
