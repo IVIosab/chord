@@ -1,25 +1,39 @@
+from email import message
+from glob import glob
 import grpc
 import chord_pb2 as pb2
 import chord_pb2_grpc as pb2_grpc
 import sys
 
-SERVER_HOST = (sys.argv[1]).split(':')[0]
-SERVER_PORT = (sys.argv[1]).split(':')[1]
 
+channel = -1
+stub = -1
+service = "Unknown"
 if __name__ == '__main__':
-    channel = grpc.insecure_channel(f'{SERVER_HOST}:{SERVER_PORT}')
-    stub = pb2_grpc.ServiceStub(channel)
     while True:
         try:
             inp = input("> ")
             if len(inp) <= 1:
                 continue
             type = inp.split()[0]
+            rest = inp.split()[1:]
             query = ' '.join(inp.split()[1:])
             if type == "connect":
-                print('connect')    
+                print(rest[0])
+                channel = grpc.insecure_channel(rest[0])
+                stub = pb2_grpc.RegistryServiceStub(channel)
+                message = pb2.IdentifyMessage()
+                try:
+                    service = stub.Identify(message).service
+                except:
+                    service = "Node"
+                print(service)
+                if service == "Node":
+                    stub = pb2_grpc.NodeServiceStub
             elif type == "get_info":
-                print('get_info')
+                message = pb2.GetInfoMessage()
+                info = stub.GetInfo(message).nodes
+                print(info)
             elif type == "save":
                 print('save')
             elif type == "remove":

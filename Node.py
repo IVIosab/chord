@@ -176,6 +176,16 @@ class Handler(pb2_grpc.NodeServiceServicer):
         reply = {"finger_table": get_finger_table()}
         return pb2.GetFingerTableMessageResponse(**reply)
 
+    def Identify(self, request, context):
+        reply = {"service": "Node"}
+        return pb2.IdentifyMessageResponse(**reply)
+
+    
+    def GetInfo(self,request,context):
+        reply = {"nodes": get_finger_table()}
+        return pb2.GetInfoMessageResponse(**reply)
+
+
 def serve():
     global M, ID, PRED, SUCC, FINGER_TABLE
     #connecting to registry to register ourselves 

@@ -1,5 +1,14 @@
 syntax = "proto3";
 
+
+message IdentifyMessage{}
+message IdentifyMessageResponse{
+    string service = 1;
+}
+message GetInfoMessage{}
+message GetInfoMessageResponse{
+    repeated Node nodes = 1;
+}
 service RegistryService{
     rpc RegistryRegister(RegisterMessage) returns (RegisterMessageResponse);
     rpc RegistryDeregister(DeregisterMessage) returns (DeregisterMessageResponse);
@@ -7,7 +16,10 @@ service RegistryService{
     rpc RegistryGetFingerTable(GetFingerTablFromRegistryMessage) returns (GetFingerTableFromRegistryMessageResponse);
     rpc RegistryGetPredecessor(GetPredecessorMessage) returns (GetPredecessorMessageResponse);
     rpc RegistryGetSuccessor(GetSuccessorMessage) returns (GetSuccessorMessageResponse);
+    rpc Identify(IdentifyMessage) returns(IdentifyMessageResponse);
+    rpc GetInfo(GetInfoMessage) returns(GetInfoMessageResponse);
 }
+
 
 //register
 message RegisterMessage{
@@ -69,6 +81,10 @@ service NodeService{
     rpc NodeSave(SaveMessage) returns (SaveMessageResponse);
     rpc NodeRemove(RemoveMessage) returns (RemoveMessageResponse);
     rpc NodeFind(FindMessage) returns (FindMessageResponse);
+    rpc Identify(IdentifyMessage) returns(IdentifyMessageResponse);
+    rpc GetInfo(GetInfoMessage) returns(GetInfoMessageResponse);
+
+
 }
 
 //get_finger_table

@@ -44,6 +44,16 @@ class RegistryServiceStub(object):
                 request_serializer=chord__pb2.GetSuccessorMessage.SerializeToString,
                 response_deserializer=chord__pb2.GetSuccessorMessageResponse.FromString,
                 )
+        self.Identify = channel.unary_unary(
+                '/RegistryService/Identify',
+                request_serializer=chord__pb2.IdentifyMessage.SerializeToString,
+                response_deserializer=chord__pb2.IdentifyMessageResponse.FromString,
+                )
+        self.GetInfo = channel.unary_unary(
+                '/RegistryService/GetInfo',
+                request_serializer=chord__pb2.GetInfoMessage.SerializeToString,
+                response_deserializer=chord__pb2.GetInfoMessageResponse.FromString,
+                )
 
 
 class RegistryServiceServicer(object):
@@ -85,6 +95,18 @@ class RegistryServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def Identify(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetInfo(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_RegistryServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -117,6 +139,16 @@ def add_RegistryServiceServicer_to_server(servicer, server):
                     servicer.RegistryGetSuccessor,
                     request_deserializer=chord__pb2.GetSuccessorMessage.FromString,
                     response_serializer=chord__pb2.GetSuccessorMessageResponse.SerializeToString,
+            ),
+            'Identify': grpc.unary_unary_rpc_method_handler(
+                    servicer.Identify,
+                    request_deserializer=chord__pb2.IdentifyMessage.FromString,
+                    response_serializer=chord__pb2.IdentifyMessageResponse.SerializeToString,
+            ),
+            'GetInfo': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetInfo,
+                    request_deserializer=chord__pb2.GetInfoMessage.FromString,
+                    response_serializer=chord__pb2.GetInfoMessageResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -230,6 +262,40 @@ class RegistryService(object):
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
+    @staticmethod
+    def Identify(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/RegistryService/Identify',
+            chord__pb2.IdentifyMessage.SerializeToString,
+            chord__pb2.IdentifyMessageResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetInfo(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/RegistryService/GetInfo',
+            chord__pb2.GetInfoMessage.SerializeToString,
+            chord__pb2.GetInfoMessageResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
 
 class NodeServiceStub(object):
     """Missing associated documentation comment in .proto file."""
@@ -260,6 +326,16 @@ class NodeServiceStub(object):
                 request_serializer=chord__pb2.FindMessage.SerializeToString,
                 response_deserializer=chord__pb2.FindMessageResponse.FromString,
                 )
+        self.Identify = channel.unary_unary(
+                '/NodeService/Identify',
+                request_serializer=chord__pb2.IdentifyMessage.SerializeToString,
+                response_deserializer=chord__pb2.IdentifyMessageResponse.FromString,
+                )
+        self.GetInfo = channel.unary_unary(
+                '/NodeService/GetInfo',
+                request_serializer=chord__pb2.GetInfoMessage.SerializeToString,
+                response_deserializer=chord__pb2.GetInfoMessageResponse.FromString,
+                )
 
 
 class NodeServiceServicer(object):
@@ -289,6 +365,18 @@ class NodeServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def Identify(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetInfo(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_NodeServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -311,6 +399,16 @@ def add_NodeServiceServicer_to_server(servicer, server):
                     servicer.NodeFind,
                     request_deserializer=chord__pb2.FindMessage.FromString,
                     response_serializer=chord__pb2.FindMessageResponse.SerializeToString,
+            ),
+            'Identify': grpc.unary_unary_rpc_method_handler(
+                    servicer.Identify,
+                    request_deserializer=chord__pb2.IdentifyMessage.FromString,
+                    response_serializer=chord__pb2.IdentifyMessageResponse.SerializeToString,
+            ),
+            'GetInfo': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetInfo,
+                    request_deserializer=chord__pb2.GetInfoMessage.FromString,
+                    response_serializer=chord__pb2.GetInfoMessageResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -387,5 +485,39 @@ class NodeService(object):
         return grpc.experimental.unary_unary(request, target, '/NodeService/NodeFind',
             chord__pb2.FindMessage.SerializeToString,
             chord__pb2.FindMessageResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def Identify(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/NodeService/Identify',
+            chord__pb2.IdentifyMessage.SerializeToString,
+            chord__pb2.IdentifyMessageResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetInfo(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/NodeService/GetInfo',
+            chord__pb2.GetInfoMessage.SerializeToString,
+            chord__pb2.GetInfoMessageResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

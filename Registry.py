@@ -119,6 +119,14 @@ class Handler(pb2_grpc.RegistryServiceServicer):
         reply = {"succ": get_successor(request.id)}
         return pb2.GetSuccessorMessageResponse(**reply)
 
+    def Identify(self, request, context):
+        reply = {"service": "Registry"}
+        return pb2.IdentifyMessageResponse(**reply)
+
+    def GetInfo(self,request,context):
+        print(get_chord_info())
+        return pb2.GetInfoMessageResponse(**get_chord_info())
+
 
 if __name__ == "__main__":
     random.seed(0)
