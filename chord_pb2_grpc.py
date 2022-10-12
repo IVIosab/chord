@@ -29,6 +29,11 @@ class RegistryServiceStub(object):
                 request_serializer=chord__pb2.GetChordInfoMessage.SerializeToString,
                 response_deserializer=chord__pb2.GetChordInfoMessageResponse.FromString,
                 )
+        self.RegistryGetFingerTable = channel.unary_unary(
+                '/RegistryService/RegistryGetFingerTable',
+                request_serializer=chord__pb2.GetFingerTablFromRegistryMessage.SerializeToString,
+                response_deserializer=chord__pb2.GetFingerTableFromRegistryMessageResponse.FromString,
+                )
 
 
 class RegistryServiceServicer(object):
@@ -52,6 +57,12 @@ class RegistryServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def RegistryGetFingerTable(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_RegistryServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -69,6 +80,11 @@ def add_RegistryServiceServicer_to_server(servicer, server):
                     servicer.RegistryGetChordInfo,
                     request_deserializer=chord__pb2.GetChordInfoMessage.FromString,
                     response_serializer=chord__pb2.GetChordInfoMessageResponse.SerializeToString,
+            ),
+            'RegistryGetFingerTable': grpc.unary_unary_rpc_method_handler(
+                    servicer.RegistryGetFingerTable,
+                    request_deserializer=chord__pb2.GetFingerTablFromRegistryMessage.FromString,
+                    response_serializer=chord__pb2.GetFingerTableFromRegistryMessageResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -128,6 +144,23 @@ class RegistryService(object):
         return grpc.experimental.unary_unary(request, target, '/RegistryService/RegistryGetChordInfo',
             chord__pb2.GetChordInfoMessage.SerializeToString,
             chord__pb2.GetChordInfoMessageResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def RegistryGetFingerTable(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/RegistryService/RegistryGetFingerTable',
+            chord__pb2.GetFingerTablFromRegistryMessage.SerializeToString,
+            chord__pb2.GetFingerTableFromRegistryMessageResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
