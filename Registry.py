@@ -33,9 +33,9 @@ def register(ipaddr, port):
     return generated_id, MAX_CHORD_SIZE
 
 
-def deregister(id):
+def deregister(node_id):
     global chord, curr_nodes_size
-    id_from_chord = chord[id]
+    id_from_chord = chord[node_id]
     if id_from_chord:
         del chord[id_from_chord]
         curr_nodes_size -= 1
@@ -44,13 +44,13 @@ def deregister(id):
     return False, "Id does not exist"
 
 
-def populate_finger_table(id):
+def populate_finger_table(node_id):
     FT = []
     for i in range(1, MAX_CHORD_SIZE):
-        tmp = get_successor(id + 2 ** (i - 1)) % (2 ** MAX_CHORD_SIZE)
-        if tmp != -1 and tmp != id:
+        tmp = get_successor(node_id + 2 ** (i - 1)) % (2 ** MAX_CHORD_SIZE)
+        if tmp != -1 and tmp != node_id:
             FT.append((tmp, chord[tmp]))
-    predecessor = get_predecessor(id)
+    predecessor = get_predecessor(node_id)
     return predecessor, FT
 
 
@@ -59,21 +59,21 @@ def get_chord_info():
     return chord_info
 
 
-def get_successor(id):
-    for i in range(id, NODES_MAX_NUM):
+def get_successor(node_id):
+    for i in range(node_id, NODES_MAX_NUM):
         if not chord.get(i) is None:
             return i
-    for i in range(0, id):
+    for i in range(0, node_id):
         if not chord.get(i) is None:
             return i
     return -1
 
 
-def get_predecessor(id):
-    for i in range(id, 0):
+def get_predecessor(node_id):
+    for i in range(node_id, 0):
         if not chord.get(i) is None:
             return i
-    for i in range(NODES_MAX_NUM, id):
+    for i in range(NODES_MAX_NUM, node_id):
         if not chord.get(i) is None:
             return i
     return -1
@@ -99,8 +99,15 @@ class Handler(pb2_grpc.RegistryServiceServicer):
     def RegistryDeregister(self, request, context):
         state, message = deregister(request.id)
         reply = {"success": state, "message": message}
-
         return pb2.DeregisterMessageResponse(**reply)
+
+    def RegistryGetChordInfo(self, request, context):
+        reply = dict(get_chord_info())
+        return pb2.GetChordInfoMessageResponse(**reply)
+
+    def RegistryGetFingerTable(self, request, context):
+        reply = dict(populate_finger_table(request.id))
+        return pb2.GetFingerTableFromRegistryMessageResponse(**reply)
 
 
 if __name__ == "__main__":
