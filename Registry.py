@@ -7,8 +7,6 @@ import grpc
 import sys
 from concurrent import futures
 
-random.seed(0)
-print(random.random())
 
 REGISTRY_HOST = (sys.argv[1]).split(':')[0]
 REGISTRY_PORT = (sys.argv[1]).split(':')[1]
@@ -28,7 +26,6 @@ def register(ipaddr, port):
     while chord[generated_id]:
         generated_id = random.randrange(0, NODES_MAX_NUM)
     chord[generated_id] = f'{ipaddr}:{port}'
-    chord = sorted(chord)
     curr_nodes_size += 1
     return generated_id, MAX_CHORD_SIZE
 
@@ -39,7 +36,6 @@ def deregister(node_id):
     if id_from_chord:
         del chord[id_from_chord]
         curr_nodes_size -= 1
-        chord = sorted(chord)
         return True, "Node deregistered"
     return False, "Id does not exist"
 
@@ -47,9 +43,10 @@ def deregister(node_id):
 def populate_finger_table(node_id):
     FT = []
     for i in range(1, MAX_CHORD_SIZE):
-        tmp = get_successor(node_id + 2 ** (i - 1)) % (2 ** MAX_CHORD_SIZE)
+        tmp = get_successor(node_id + 2 ** (i - 1)% (2 ** MAX_CHORD_SIZE)) 
         if tmp != -1 and tmp != node_id:
-            FT.append((tmp, chord[tmp]))
+            if not tmp in FT:
+                FT.append((tmp, chord[tmp]))
     predecessor = get_predecessor(node_id)
     return predecessor, FT
 
@@ -59,7 +56,7 @@ def get_chord_info():
     return chord_info
 
 
-def get_successor(node_id):
+def  get_successor(node_id):
     for i in range(node_id, NODES_MAX_NUM):
         if not chord.get(i) is None:
             return i
@@ -102,16 +99,16 @@ class Handler(pb2_grpc.RegistryServiceServicer):
         return pb2.DeregisterMessageResponse(**reply)
 
     def RegistryGetChordInfo(self, request, context):
-        reply = dict(get_chord_info())
+        reply = get_chord_info()
         return pb2.GetChordInfoMessageResponse(**reply)
 
     def RegistryGetFingerTable(self, request, context):
-        reply = dict(populate_finger_table(request.id))
+        reply = populate_finger_table(request.id)
         return pb2.GetFingerTableFromRegistryMessageResponse(**reply)
 
 
-
 if __name__ == "__main__":
+    random.seed(0)
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     chord_pb2_grpc.add_GreeterServicer_to_server(Handler(), server)
     server.add_insecure_port(f'{REGISTRY_HOST}:{REGISTRY_PORT}')

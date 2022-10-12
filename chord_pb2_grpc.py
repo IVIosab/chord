@@ -34,6 +34,16 @@ class RegistryServiceStub(object):
                 request_serializer=chord__pb2.GetFingerTablFromRegistryMessage.SerializeToString,
                 response_deserializer=chord__pb2.GetFingerTableFromRegistryMessageResponse.FromString,
                 )
+        self.RegistryGetPredecessor = channel.unary_unary(
+                '/RegistryService/RegistryGetPredecessor',
+                request_serializer=chord__pb2.GetPredecessorMessage.SerializeToString,
+                response_deserializer=chord__pb2.GetPredecessorMessageResponse.FromString,
+                )
+        self.RegistryGetSuccessor = channel.unary_unary(
+                '/RegistryService/RegistryGetSuccessor',
+                request_serializer=chord__pb2.GetSuccessorMessage.SerializeToString,
+                response_deserializer=chord__pb2.GetSuccessorMessageResponse.FromString,
+                )
 
 
 class RegistryServiceServicer(object):
@@ -63,6 +73,18 @@ class RegistryServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def RegistryGetPredecessor(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def RegistryGetSuccessor(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_RegistryServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -85,6 +107,16 @@ def add_RegistryServiceServicer_to_server(servicer, server):
                     servicer.RegistryGetFingerTable,
                     request_deserializer=chord__pb2.GetFingerTablFromRegistryMessage.FromString,
                     response_serializer=chord__pb2.GetFingerTableFromRegistryMessageResponse.SerializeToString,
+            ),
+            'RegistryGetPredecessor': grpc.unary_unary_rpc_method_handler(
+                    servicer.RegistryGetPredecessor,
+                    request_deserializer=chord__pb2.GetPredecessorMessage.FromString,
+                    response_serializer=chord__pb2.GetPredecessorMessageResponse.SerializeToString,
+            ),
+            'RegistryGetSuccessor': grpc.unary_unary_rpc_method_handler(
+                    servicer.RegistryGetSuccessor,
+                    request_deserializer=chord__pb2.GetSuccessorMessage.FromString,
+                    response_serializer=chord__pb2.GetSuccessorMessageResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -161,6 +193,40 @@ class RegistryService(object):
         return grpc.experimental.unary_unary(request, target, '/RegistryService/RegistryGetFingerTable',
             chord__pb2.GetFingerTablFromRegistryMessage.SerializeToString,
             chord__pb2.GetFingerTableFromRegistryMessageResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def RegistryGetPredecessor(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/RegistryService/RegistryGetPredecessor',
+            chord__pb2.GetPredecessorMessage.SerializeToString,
+            chord__pb2.GetPredecessorMessageResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def RegistryGetSuccessor(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/RegistryService/RegistryGetSuccessor',
+            chord__pb2.GetSuccessorMessage.SerializeToString,
+            chord__pb2.GetSuccessorMessageResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
