@@ -39,7 +39,8 @@ message GetFingerTablFromRegistryMessage{
     int32 id = 1;
 }
 message GetFingerTableFromRegistryMessageResponse{
-    repeated Node nodes = 1;
+    int32 pred = 1;
+    repeated Node nodes = 2;
 }
 message Node{
     int32 chord_id = 1;
@@ -50,7 +51,7 @@ message GetPredecessorMessage{
     int32 id = 1;
 }
 message  GetPredecessorMessageResponse{
-    int32 predcessor = 1;
+    int32 pred = 1;
 }
 
 
@@ -58,7 +59,7 @@ message GetSuccessorMessage{
     int32 id = 1;
 }
 message  GetSuccessorMessageResponse{
-    int32 successor = 1;
+    int32 succ = 1;
 }
 
 
