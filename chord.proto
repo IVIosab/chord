@@ -5,6 +5,8 @@ service RegistryService{
     rpc RegistryDeregister(DeregisterMessage) returns (DeregisterMessageResponse);
     rpc RegistryGetChordInfo(GetChordInfoMessage) returns (GetChordInfoMessageResponse);
     rpc RegistryGetFingerTable(GetFingerTablFromRegistryMessage) returns (GetFingerTableFromRegistryMessageResponse);
+    rpc RegistryGetPredecessor(GetPredecessorMessage) returns (GetPredecessorMessageResponse);
+    rpc RegistryGetSuccessor(GetSuccessorMessage) returns (GetSuccessorMessageResponse);
 }
 
 //register
@@ -42,6 +44,21 @@ message GetFingerTableFromRegistryMessageResponse{
 message Node{
     int32 chord_id = 1;
     string chord_ip_address = 2;
+}
+
+message GetPredecessorMessage{
+    int32 id = 1;
+}
+message  GetPredecessorMessageResponse{
+    int32 predcessor = 1;
+}
+
+
+message GetSuccessorMessage{
+    int32 id = 1;
+}
+message  GetSuccessorMessageResponse{
+    int32 successor = 1;
 }
 
 
