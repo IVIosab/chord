@@ -110,6 +110,7 @@ class Handler(pb2_grpc.RegistryServiceServicer):
         return pb2.GetFingerTableFromRegistryMessageResponse(**reply)
 
 
+
 if __name__ == "__main__":
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     chord_pb2_grpc.add_GreeterServicer_to_server(Handler(), server)
