@@ -13,15 +13,13 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0b\x63hord.proto\"/\n\x0fRegisterMessage\x12\x0e\n\x06ipaddr\x18\x01 \x01(\t\x12\x0c\n\x04port\x18\x02 \x01(\t\"A\n\x17RegisterMessageResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\n\n\x02id\x18\x02 \x01(\x05\x12\t\n\x01m\x18\x03 \x01(\x05\"\x1f\n\x11\x44\x65registerMessage\x12\n\n\x02id\x18\x01 \x01(\x05\"=\n\x19\x44\x65registerMessageResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x15\n\x13GetChordInfoMessage\"3\n\x1bGetChordInfoMessageResponse\x12\x14\n\x05nodes\x18\x01 \x03(\x0b\x32\x05.Node\".\n GetFingerTablFromRegistryMessage\x12\n\n\x02id\x18\x01 \x01(\x05\"O\n)GetFingerTableFromRegistryMessageResponse\x12\x0c\n\x04pred\x18\x01 \x01(\x05\x12\x14\n\x05nodes\x18\x02 \x03(\x0b\x32\x05.Node\"2\n\x04Node\x12\x10\n\x08\x63hord_id\x18\x01 \x01(\x05\x12\x18\n\x10\x63hord_ip_address\x18\x02 \x01(\t\"#\n\x15GetPredecessorMessage\x12\n\n\x02id\x18\x01 \x01(\x05\"-\n\x1dGetPredecessorMessageResponse\x12\x0c\n\x04pred\x18\x01 \x01(\x05\"!\n\x13GetSuccessorMessage\x12\n\n\x02id\x18\x01 \x01(\x05\"+\n\x1bGetSuccessorMessageResponse\x12\x0c\n\x04succ\x18\x01 \x01(\x05\"\x17\n\x15GetFingerTableMessage\"\x9a\x01\n\x1dGetFingerTableMessageResponse\x12\x45\n\x0c\x66inger_table\x18\x01 \x03(\x0b\x32/.GetFingerTableMessageResponse.FingerTableEntry\x1a\x32\n\x10\x46ingerTableEntry\x12\x0b\n\x03key\x18\x01 \x01(\x05\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"(\n\x0bSaveMessage\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x0c\n\x04text\x18\x02 \x01(\t\"C\n\x13SaveMessageResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\n\n\x02id\x18\x02 \x01(\x05\x12\x0f\n\x07message\x18\x03 \x01(\t\"\x1c\n\rRemoveMessage\x12\x0b\n\x03key\x18\x01 \x01(\t\"E\n\x15RemoveMessageResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\n\n\x02id\x18\x02 \x01(\x05\x12\x0f\n\x07message\x18\x03 \x01(\t\"\x1a\n\x0b\x46indMessage\x12\x0b\n\x03key\x18\x01 \x01(\t\"a\n\x13\x46indMessageResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\n\n\x02id\x18\x02 \x01(\x05\x12\x0f\n\x07message\x18\x03 \x01(\t\x12\x0e\n\x06ipaddr\x18\x04 \x01(\t\x12\x0c\n\x04port\x18\x05 \x01(\t2\xea\x03\n\x0fRegistryService\x12>\n\x10RegistryRegister\x12\x10.RegisterMessage\x1a\x18.RegisterMessageResponse\x12\x44\n\x12RegistryDeregister\x12\x12.DeregisterMessage\x1a\x1a.DeregisterMessageResponse\x12J\n\x14RegistryGetChordInfo\x12\x14.GetChordInfoMessage\x1a\x1c.GetChordInfoMessageResponse\x12g\n\x16RegistryGetFingerTable\x12!.GetFingerTablFromRegistryMessage\x1a*.GetFingerTableFromRegistryMessageResponse\x12P\n\x16RegistryGetPredecessor\x12\x16.GetPredecessorMessage\x1a\x1e.GetPredecessorMessageResponse\x12J\n\x14RegistryGetSuccessor\x12\x14.GetSuccessorMessage\x1a\x1c.GetSuccessorMessageResponse2\xf1\x01\n\x0bNodeService\x12L\n\x12NodeGetFingerTable\x12\x16.GetFingerTableMessage\x1a\x1e.GetFingerTableMessageResponse\x12.\n\x08NodeSave\x12\x0c.SaveMessage\x1a\x14.SaveMessageResponse\x12\x34\n\nNodeRemove\x12\x0e.RemoveMessage\x1a\x16.RemoveMessageResponse\x12.\n\x08NodeFind\x12\x0c.FindMessage\x1a\x14.FindMessageResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0b\x63hord.proto\"/\n\x0fRegisterMessage\x12\x0e\n\x06ipaddr\x18\x01 \x01(\t\x12\x0c\n\x04port\x18\x02 \x01(\t\"A\n\x17RegisterMessageResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\n\n\x02id\x18\x02 \x01(\x05\x12\t\n\x01m\x18\x03 \x01(\x05\"\x1f\n\x11\x44\x65registerMessage\x12\n\n\x02id\x18\x01 \x01(\x05\"=\n\x19\x44\x65registerMessageResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x15\n\x13GetChordInfoMessage\"3\n\x1bGetChordInfoMessageResponse\x12\x14\n\x05nodes\x18\x01 \x03(\x0b\x32\x05.Node\".\n GetFingerTablFromRegistryMessage\x12\n\n\x02id\x18\x01 \x01(\x05\"O\n)GetFingerTableFromRegistryMessageResponse\x12\x0c\n\x04pred\x18\x01 \x01(\x05\x12\x14\n\x05nodes\x18\x02 \x03(\x0b\x32\x05.Node\"2\n\x04Node\x12\x10\n\x08\x63hord_id\x18\x01 \x01(\x05\x12\x18\n\x10\x63hord_ip_address\x18\x02 \x01(\t\"#\n\x15GetPredecessorMessage\x12\n\n\x02id\x18\x01 \x01(\x05\"-\n\x1dGetPredecessorMessageResponse\x12\x0c\n\x04pred\x18\x01 \x01(\x05\"!\n\x13GetSuccessorMessage\x12\n\n\x02id\x18\x01 \x01(\x05\"+\n\x1bGetSuccessorMessageResponse\x12\x0c\n\x04succ\x18\x01 \x01(\x05\"\x17\n\x15GetFingerTableMessage\"<\n\x1dGetFingerTableMessageResponse\x12\x1b\n\x0c\x66inger_table\x18\x01 \x03(\x0b\x32\x05.Node\"(\n\x0bSaveMessage\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x0c\n\x04text\x18\x02 \x01(\t\"C\n\x13SaveMessageResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\n\n\x02id\x18\x02 \x01(\x05\x12\x0f\n\x07message\x18\x03 \x01(\t\"\x1c\n\rRemoveMessage\x12\x0b\n\x03key\x18\x01 \x01(\t\"E\n\x15RemoveMessageResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\n\n\x02id\x18\x02 \x01(\x05\x12\x0f\n\x07message\x18\x03 \x01(\t\"\x1a\n\x0b\x46indMessage\x12\x0b\n\x03key\x18\x01 \x01(\t\"a\n\x13\x46indMessageResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\n\n\x02id\x18\x02 \x01(\x05\x12\x0f\n\x07message\x18\x03 \x01(\t\x12\x0e\n\x06ipaddr\x18\x04 \x01(\t\x12\x0c\n\x04port\x18\x05 \x01(\t2\xea\x03\n\x0fRegistryService\x12>\n\x10RegistryRegister\x12\x10.RegisterMessage\x1a\x18.RegisterMessageResponse\x12\x44\n\x12RegistryDeregister\x12\x12.DeregisterMessage\x1a\x1a.DeregisterMessageResponse\x12J\n\x14RegistryGetChordInfo\x12\x14.GetChordInfoMessage\x1a\x1c.GetChordInfoMessageResponse\x12g\n\x16RegistryGetFingerTable\x12!.GetFingerTablFromRegistryMessage\x1a*.GetFingerTableFromRegistryMessageResponse\x12P\n\x16RegistryGetPredecessor\x12\x16.GetPredecessorMessage\x1a\x1e.GetPredecessorMessageResponse\x12J\n\x14RegistryGetSuccessor\x12\x14.GetSuccessorMessage\x1a\x1c.GetSuccessorMessageResponse2\xf1\x01\n\x0bNodeService\x12L\n\x12NodeGetFingerTable\x12\x16.GetFingerTableMessage\x1a\x1e.GetFingerTableMessageResponse\x12.\n\x08NodeSave\x12\x0c.SaveMessage\x1a\x14.SaveMessageResponse\x12\x34\n\nNodeRemove\x12\x0e.RemoveMessage\x1a\x16.RemoveMessageResponse\x12.\n\x08NodeFind\x12\x0c.FindMessage\x1a\x14.FindMessageResponseb\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'chord_pb2', globals())
 if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
-  _GETFINGERTABLEMESSAGERESPONSE_FINGERTABLEENTRY._options = None
-  _GETFINGERTABLEMESSAGERESPONSE_FINGERTABLEENTRY._serialized_options = b'8\001'
   _REGISTERMESSAGE._serialized_start=15
   _REGISTERMESSAGE._serialized_end=62
   _REGISTERMESSAGERESPONSE._serialized_start=64
@@ -50,24 +48,22 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _GETSUCCESSORMESSAGERESPONSE._serialized_end=646
   _GETFINGERTABLEMESSAGE._serialized_start=648
   _GETFINGERTABLEMESSAGE._serialized_end=671
-  _GETFINGERTABLEMESSAGERESPONSE._serialized_start=674
-  _GETFINGERTABLEMESSAGERESPONSE._serialized_end=828
-  _GETFINGERTABLEMESSAGERESPONSE_FINGERTABLEENTRY._serialized_start=778
-  _GETFINGERTABLEMESSAGERESPONSE_FINGERTABLEENTRY._serialized_end=828
-  _SAVEMESSAGE._serialized_start=830
-  _SAVEMESSAGE._serialized_end=870
-  _SAVEMESSAGERESPONSE._serialized_start=872
-  _SAVEMESSAGERESPONSE._serialized_end=939
-  _REMOVEMESSAGE._serialized_start=941
-  _REMOVEMESSAGE._serialized_end=969
-  _REMOVEMESSAGERESPONSE._serialized_start=971
-  _REMOVEMESSAGERESPONSE._serialized_end=1040
-  _FINDMESSAGE._serialized_start=1042
-  _FINDMESSAGE._serialized_end=1068
-  _FINDMESSAGERESPONSE._serialized_start=1070
-  _FINDMESSAGERESPONSE._serialized_end=1167
-  _REGISTRYSERVICE._serialized_start=1170
-  _REGISTRYSERVICE._serialized_end=1660
-  _NODESERVICE._serialized_start=1663
-  _NODESERVICE._serialized_end=1904
+  _GETFINGERTABLEMESSAGERESPONSE._serialized_start=673
+  _GETFINGERTABLEMESSAGERESPONSE._serialized_end=733
+  _SAVEMESSAGE._serialized_start=735
+  _SAVEMESSAGE._serialized_end=775
+  _SAVEMESSAGERESPONSE._serialized_start=777
+  _SAVEMESSAGERESPONSE._serialized_end=844
+  _REMOVEMESSAGE._serialized_start=846
+  _REMOVEMESSAGE._serialized_end=874
+  _REMOVEMESSAGERESPONSE._serialized_start=876
+  _REMOVEMESSAGERESPONSE._serialized_end=945
+  _FINDMESSAGE._serialized_start=947
+  _FINDMESSAGE._serialized_end=973
+  _FINDMESSAGERESPONSE._serialized_start=975
+  _FINDMESSAGERESPONSE._serialized_end=1072
+  _REGISTRYSERVICE._serialized_start=1075
+  _REGISTRYSERVICE._serialized_end=1565
+  _NODESERVICE._serialized_start=1568
+  _NODESERVICE._serialized_end=1809
 # @@protoc_insertion_point(module_scope)

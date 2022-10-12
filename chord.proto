@@ -74,7 +74,7 @@ service NodeService{
 //get_finger_table
 message GetFingerTableMessage{}
 message GetFingerTableMessageResponse{
-    map<int32,string> finger_table = 1;
+    repeated Node finger_table = 1;
 }
 
 //save

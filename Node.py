@@ -18,7 +18,8 @@ FINGER_TABLE = {}
 DATA = {}
 
 def get_finger_table():
-    print("get finger table")
+    finger_table = [(k, v) for k, v in FINGER_TABLE.items()]
+    return finger_table
 
 def save(key, text):
     print(f'save {key} <> {text}')
@@ -29,7 +30,7 @@ def remove(key):
 def find(key):
     print(f'find {key}')
 
-class Handler(pb2_grpc.Service):
+class Handler(pb2_grpc.NodeServiceServicer):
     def __init__(self, *args, **kwargs):
         pass  
     
@@ -37,8 +38,10 @@ class Handler(pb2_grpc.Service):
         global DATA
         key = request.key
         text = request.text
+        
         hash_value = zlib.adler32(key.encode())
         target_id = hash_value % 2**M
+        
         success = False
         message = ""  
         if target_id == ID:
@@ -102,7 +105,7 @@ class Handler(pb2_grpc.Service):
         return pb2.FindMessageResponse(**reply)
 
     def NodeGetFingerTable(self, request, context):
-        reply = {"finger_table": FINGER_TABLE}
+        reply = {"finger_table": get_finger_table()}
         return pb2.GetFingerTableMessageResponse(**reply)
 
 def serve():

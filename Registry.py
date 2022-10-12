@@ -105,6 +105,14 @@ class Handler(pb2_grpc.RegistryServiceServicer):
     def RegistryGetFingerTable(self, request, context):
         reply = populate_finger_table(request.id)
         return pb2.GetFingerTableFromRegistryMessageResponse(**reply)
+    
+    def RegistryGetPredecessor(self, request, context):
+        reply = get_predecessor(request.id)
+        return pb2.GetPredecessorMessageResponse(**reply)
+    
+    def RegistryGetSuccessor(self, request, context):
+        reply = get_successor(request.id)
+        return pb2.GetSuccessorMessageResponse(**reply)
 
 
 if __name__ == "__main__":
