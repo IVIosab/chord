@@ -82,7 +82,7 @@ message RemoveMessageResponse{
 
 //find
 message FindMessage{
-    string text = 1;
+    string key = 1; 
 }
 message FindMessageResponse{
     bool success = 1;
