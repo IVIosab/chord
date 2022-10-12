@@ -23,10 +23,11 @@ def register(ipaddr, port):
         return -1, "The chord ring is full already"
 
     generated_id = random.randrange(0, NODES_MAX_NUM)
-    while chord[generated_id]:
+    while chord.get(generated_id):
         generated_id = random.randrange(0, NODES_MAX_NUM)
     chord[generated_id] = f'{ipaddr}:{port}'
     curr_nodes_size += 1
+    print(f'{generated_id} | {MAX_CHORD_SIZE}')
     return generated_id, MAX_CHORD_SIZE
 
 
@@ -43,37 +44,40 @@ def deregister(node_id):
 def populate_finger_table(node_id):
     FT = []
     for i in range(1, MAX_CHORD_SIZE):
-        tmp = get_successor(node_id + 2 ** (i - 1)% (2 ** MAX_CHORD_SIZE)) 
-        if tmp != -1 and tmp != node_id:
-            if not tmp in FT:
-                FT.append((tmp, chord[tmp]))
+        tmp = get_successor(node_id + 2 ** (i - 1))% (2 ** MAX_CHORD_SIZE)
+        if tmp != -1 and not {"chord_id":tmp, "chord_ip_address": chord.get(tmp)} in FT:
+            FT.append({"chord_id": tmp, "chord_ip_address": chord.get(tmp)})
     predecessor = get_predecessor(node_id)
-    return predecessor, FT
+    print(predecessor)
+    print(FT)
+    return {"pred": predecessor, "nodes": FT}
 
 
 def get_chord_info():
     chord_info = [(k, v) for k, v in chord.items()]
-    return chord_info
+    return {"nodes": chord_info}
 
 
 def  get_successor(node_id):
+    output_id = -1
     for i in range(node_id, NODES_MAX_NUM):
         if not chord.get(i) is None:
-            return i
+            output_id = i
     for i in range(0, node_id):
         if not chord.get(i) is None:
-            return i
-    return -1
+            output_id = i
+    return output_id
 
 
 def get_predecessor(node_id):
-    for i in range(node_id, 0):
+    output_id = -1
+    for i in range(node_id, 0, -1):
         if not chord.get(i) is None:
-            return i
-    for i in range(NODES_MAX_NUM, node_id):
+            output_id = i
+    for i in range(NODES_MAX_NUM, node_id, -1):
         if not chord.get(i) is None:
-            return i
-    return -1
+            output_id = i
+    return output_id
 
 
 class Handler(pb2_grpc.RegistryServiceServicer):
@@ -107,18 +111,19 @@ class Handler(pb2_grpc.RegistryServiceServicer):
         return pb2.GetFingerTableFromRegistryMessageResponse(**reply)
     
     def RegistryGetPredecessor(self, request, context):
-        reply = get_predecessor(request.id)
+        reply = {"pred": get_predecessor(request.id)}
+        print(reply)
         return pb2.GetPredecessorMessageResponse(**reply)
     
     def RegistryGetSuccessor(self, request, context):
-        reply = get_successor(request.id)
+        reply = {"succ": get_successor(request.id)}
         return pb2.GetSuccessorMessageResponse(**reply)
 
 
 if __name__ == "__main__":
     random.seed(0)
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    chord_pb2_grpc.add_GreeterServicer_to_server(Handler(), server)
+    chord_pb2_grpc.add_RegistryServiceServicer_to_server(Handler(), server)
     server.add_insecure_port(f'{REGISTRY_HOST}:{REGISTRY_PORT}')
     server.start()
     try:
