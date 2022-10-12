@@ -4,6 +4,7 @@ service RegistryService{
     rpc RegistryRegister(RegisterMessage) returns (RegisterMessageResponse);
     rpc RegistryDeregister(DeregisterMessage) returns (DeregisterMessageResponse);
     rpc RegistryGetChordInfo(GetChordInfoMessage) returns (GetChordInfoMessageResponse);
+    rpc RegistryGetFingerTable(GetFingerTablFromRegistryMessage) returns (GetFingerTableFromRegistryMessageResponse);
 }
 
 //register
@@ -29,7 +30,18 @@ message DeregisterMessageResponse{
 //get_chord_info
 message GetChordInfoMessage{}
 message GetChordInfoMessageResponse{
-    map<int32,string> chord_info = 1;
+    repeated Node nodes = 1;
+}
+
+message GetFingerTablFromRegistryMessage{
+    int32 id = 1;
+}
+message GetFingerTableFromRegistryMessageResponse{
+    repeated Node nodes = 1;
+}
+message Node{
+    int32 chord_id = 1;
+    string chord_ip_address = 2;
 }
 
 
