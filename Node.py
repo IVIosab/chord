@@ -1,5 +1,6 @@
 from ast import Global
 from glob import glob
+import grp
 import random
 import sys
 from traceback import print_tb
@@ -223,10 +224,14 @@ def serve():
     while True:
         try:
             while True:
-                x=server.wait_for_termination(1)
-                if x:
-                    populate_ft(stub)
-                    print(f'assigned node_id={ID}, successor_id={SUCC}, predecessor_id={PRED}')
+                try: 
+                    x=server.wait_for_termination(1)
+                    if x:
+                        populate_ft(stub)
+                        print(f'assigned node_id={ID}, successor_id={SUCC}, predecessor_id={PRED}')
+                except grpc.RpcError:
+                    print("Registry Terminated")
+                    sys.exit(0)
         except KeyboardInterrupt:
             #Deregistering
             #notify successor
