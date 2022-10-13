@@ -1,3 +1,4 @@
+from email import message
 import random
 
 import chord_pb2_grpc
@@ -17,20 +18,6 @@ curr_nodes_size = 0
 chord = {}
 
 
-def deregister(node_id):
-    global chord, curr_nodes_size
-    id_from_chord = chord[node_id]
-    if id_from_chord:
-        del chord[id_from_chord]
-        curr_nodes_size -= 1
-        return True, "Node deregistered"
-    return False, "Id does not exist"
-
-
-
-def get_chord_info():
-    chord_info = [(k, v) for k, v in chord.items()]
-    return {"nodes": chord_info}
 
 
 def  get_successor(node_id):
@@ -82,12 +69,22 @@ class Handler(pb2_grpc.ServiceServicer):
         return pb2.RegisterMessageResponse(**reply)
 
     def RegistryDeregister(self, request, context):
-        state, message = deregister(request.id)
-        reply = {"success": state, "message": message}
+        global chord, curr_nodes_size
+        node_id = request.id
+        id_from_chord = chord[node_id]
+        sucess = False
+        message = "Id does not exist"
+        if id_from_chord:
+            del chord[id_from_chord]
+            curr_nodes_size -= 1
+            sucess = True
+            message = "Node deregistered"
+        reply = {"success": sucess, "message": message}
         return pb2.DeregisterMessageResponse(**reply)
 
     def RegistryGetChordInfo(self, request, context):
-        reply = get_chord_info()
+        chord_info = [(k, v) for k, v in chord.items()]
+        reply = {"nodes": chord_info}
         return pb2.GetChordInfoMessageResponse(**reply)
 
     def RegistryPopulateFingerTable(self, request, context):
