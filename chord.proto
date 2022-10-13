@@ -1,25 +1,17 @@
 syntax = "proto3";
 
 
-message IdentifyMessage{}
-message IdentifyMessageResponse{
-    string service = 1;
-}
-message GetInfoMessage{}
-message GetInfoMessageResponse{
-    repeated Node nodes = 1;
-}
-service RegistryService{
+service Service{
     rpc RegistryRegister(RegisterMessage) returns (RegisterMessageResponse);
     rpc RegistryDeregister(DeregisterMessage) returns (DeregisterMessageResponse);
     rpc RegistryGetChordInfo(GetChordInfoMessage) returns (GetChordInfoMessageResponse);
-    rpc RegistryGetFingerTable(GetFingerTablFromRegistryMessage) returns (GetFingerTableFromRegistryMessageResponse);
-    rpc RegistryGetPredecessor(GetPredecessorMessage) returns (GetPredecessorMessageResponse);
-    rpc RegistryGetSuccessor(GetSuccessorMessage) returns (GetSuccessorMessageResponse);
+    rpc RegistryPopulateFingerTable(PopulateFingerTableRegistryMessage) returns (PopulateFingerTableRegistryMessageResponse);
     rpc Identify(IdentifyMessage) returns(IdentifyMessageResponse);
-    rpc GetInfo(GetInfoMessage) returns(GetInfoMessageResponse);
+    rpc NodeGetFingerTable(GetFingerTableMessage) returns (GetFingerTableMessageResponse);
+    rpc NodeSave(SaveMessage) returns (SaveMessageResponse);
+    rpc NodeRemove(RemoveMessage) returns (RemoveMessageResponse);
+    rpc NodeFind(FindMessage) returns (FindMessageResponse);
 }
-
 
 //register
 message RegisterMessage{
@@ -47,10 +39,11 @@ message GetChordInfoMessageResponse{
     repeated Node nodes = 1;
 }
 
-message GetFingerTablFromRegistryMessage{
+//populate_finger_table
+message PopulateFingerTableRegistryMessage{
     int32 id = 1;
 }
-message GetFingerTableFromRegistryMessageResponse{
+message PopulateFingerTableRegistryMessageResponse{
     int32 pred = 1;
     repeated Node nodes = 2;
 }
@@ -59,33 +52,13 @@ message Node{
     string chord_ip_address = 2;
 }
 
-message GetPredecessorMessage{
-    int32 id = 1;
-}
-message  GetPredecessorMessageResponse{
-    int32 pred = 1;
-}
 
-
-message GetSuccessorMessage{
-    int32 id = 1;
-}
-message  GetSuccessorMessageResponse{
-    int32 succ = 1;
+// identify if node or registry
+message IdentifyMessage{}
+message IdentifyMessageResponse{
+    string service = 1;
 }
 
-
-
-service NodeService{
-    rpc NodeGetFingerTable(GetFingerTableMessage) returns (GetFingerTableMessageResponse);
-    rpc NodeSave(SaveMessage) returns (SaveMessageResponse);
-    rpc NodeRemove(RemoveMessage) returns (RemoveMessageResponse);
-    rpc NodeFind(FindMessage) returns (FindMessageResponse);
-    rpc Identify(IdentifyMessage) returns(IdentifyMessageResponse);
-    rpc GetInfo(GetInfoMessage) returns(GetInfoMessageResponse);
-
-
-}
 
 //get_finger_table
 message GetFingerTableMessage{}

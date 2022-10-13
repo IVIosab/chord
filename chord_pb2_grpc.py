@@ -5,7 +5,7 @@ import grpc
 import chord_pb2 as chord__pb2
 
 
-class RegistryServiceStub(object):
+class ServiceStub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -15,48 +15,53 @@ class RegistryServiceStub(object):
             channel: A grpc.Channel.
         """
         self.RegistryRegister = channel.unary_unary(
-                '/RegistryService/RegistryRegister',
+                '/Service/RegistryRegister',
                 request_serializer=chord__pb2.RegisterMessage.SerializeToString,
                 response_deserializer=chord__pb2.RegisterMessageResponse.FromString,
                 )
         self.RegistryDeregister = channel.unary_unary(
-                '/RegistryService/RegistryDeregister',
+                '/Service/RegistryDeregister',
                 request_serializer=chord__pb2.DeregisterMessage.SerializeToString,
                 response_deserializer=chord__pb2.DeregisterMessageResponse.FromString,
                 )
         self.RegistryGetChordInfo = channel.unary_unary(
-                '/RegistryService/RegistryGetChordInfo',
+                '/Service/RegistryGetChordInfo',
                 request_serializer=chord__pb2.GetChordInfoMessage.SerializeToString,
                 response_deserializer=chord__pb2.GetChordInfoMessageResponse.FromString,
                 )
-        self.RegistryGetFingerTable = channel.unary_unary(
-                '/RegistryService/RegistryGetFingerTable',
-                request_serializer=chord__pb2.GetFingerTablFromRegistryMessage.SerializeToString,
-                response_deserializer=chord__pb2.GetFingerTableFromRegistryMessageResponse.FromString,
-                )
-        self.RegistryGetPredecessor = channel.unary_unary(
-                '/RegistryService/RegistryGetPredecessor',
-                request_serializer=chord__pb2.GetPredecessorMessage.SerializeToString,
-                response_deserializer=chord__pb2.GetPredecessorMessageResponse.FromString,
-                )
-        self.RegistryGetSuccessor = channel.unary_unary(
-                '/RegistryService/RegistryGetSuccessor',
-                request_serializer=chord__pb2.GetSuccessorMessage.SerializeToString,
-                response_deserializer=chord__pb2.GetSuccessorMessageResponse.FromString,
+        self.RegistryPopulateFingerTable = channel.unary_unary(
+                '/Service/RegistryPopulateFingerTable',
+                request_serializer=chord__pb2.PopulateFingerTableRegistryMessage.SerializeToString,
+                response_deserializer=chord__pb2.PopulateFingerTableRegistryMessageResponse.FromString,
                 )
         self.Identify = channel.unary_unary(
-                '/RegistryService/Identify',
+                '/Service/Identify',
                 request_serializer=chord__pb2.IdentifyMessage.SerializeToString,
                 response_deserializer=chord__pb2.IdentifyMessageResponse.FromString,
                 )
-        self.GetInfo = channel.unary_unary(
-                '/RegistryService/GetInfo',
-                request_serializer=chord__pb2.GetInfoMessage.SerializeToString,
-                response_deserializer=chord__pb2.GetInfoMessageResponse.FromString,
+        self.NodeGetFingerTable = channel.unary_unary(
+                '/Service/NodeGetFingerTable',
+                request_serializer=chord__pb2.GetFingerTableMessage.SerializeToString,
+                response_deserializer=chord__pb2.GetFingerTableMessageResponse.FromString,
+                )
+        self.NodeSave = channel.unary_unary(
+                '/Service/NodeSave',
+                request_serializer=chord__pb2.SaveMessage.SerializeToString,
+                response_deserializer=chord__pb2.SaveMessageResponse.FromString,
+                )
+        self.NodeRemove = channel.unary_unary(
+                '/Service/NodeRemove',
+                request_serializer=chord__pb2.RemoveMessage.SerializeToString,
+                response_deserializer=chord__pb2.RemoveMessageResponse.FromString,
+                )
+        self.NodeFind = channel.unary_unary(
+                '/Service/NodeFind',
+                request_serializer=chord__pb2.FindMessage.SerializeToString,
+                response_deserializer=chord__pb2.FindMessageResponse.FromString,
                 )
 
 
-class RegistryServiceServicer(object):
+class ServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def RegistryRegister(self, request, context):
@@ -77,19 +82,7 @@ class RegistryServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def RegistryGetFingerTable(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def RegistryGetPredecessor(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def RegistryGetSuccessor(self, request, context):
+    def RegistryPopulateFingerTable(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -100,246 +93,6 @@ class RegistryServiceServicer(object):
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
-
-    def GetInfo(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-
-def add_RegistryServiceServicer_to_server(servicer, server):
-    rpc_method_handlers = {
-            'RegistryRegister': grpc.unary_unary_rpc_method_handler(
-                    servicer.RegistryRegister,
-                    request_deserializer=chord__pb2.RegisterMessage.FromString,
-                    response_serializer=chord__pb2.RegisterMessageResponse.SerializeToString,
-            ),
-            'RegistryDeregister': grpc.unary_unary_rpc_method_handler(
-                    servicer.RegistryDeregister,
-                    request_deserializer=chord__pb2.DeregisterMessage.FromString,
-                    response_serializer=chord__pb2.DeregisterMessageResponse.SerializeToString,
-            ),
-            'RegistryGetChordInfo': grpc.unary_unary_rpc_method_handler(
-                    servicer.RegistryGetChordInfo,
-                    request_deserializer=chord__pb2.GetChordInfoMessage.FromString,
-                    response_serializer=chord__pb2.GetChordInfoMessageResponse.SerializeToString,
-            ),
-            'RegistryGetFingerTable': grpc.unary_unary_rpc_method_handler(
-                    servicer.RegistryGetFingerTable,
-                    request_deserializer=chord__pb2.GetFingerTablFromRegistryMessage.FromString,
-                    response_serializer=chord__pb2.GetFingerTableFromRegistryMessageResponse.SerializeToString,
-            ),
-            'RegistryGetPredecessor': grpc.unary_unary_rpc_method_handler(
-                    servicer.RegistryGetPredecessor,
-                    request_deserializer=chord__pb2.GetPredecessorMessage.FromString,
-                    response_serializer=chord__pb2.GetPredecessorMessageResponse.SerializeToString,
-            ),
-            'RegistryGetSuccessor': grpc.unary_unary_rpc_method_handler(
-                    servicer.RegistryGetSuccessor,
-                    request_deserializer=chord__pb2.GetSuccessorMessage.FromString,
-                    response_serializer=chord__pb2.GetSuccessorMessageResponse.SerializeToString,
-            ),
-            'Identify': grpc.unary_unary_rpc_method_handler(
-                    servicer.Identify,
-                    request_deserializer=chord__pb2.IdentifyMessage.FromString,
-                    response_serializer=chord__pb2.IdentifyMessageResponse.SerializeToString,
-            ),
-            'GetInfo': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetInfo,
-                    request_deserializer=chord__pb2.GetInfoMessage.FromString,
-                    response_serializer=chord__pb2.GetInfoMessageResponse.SerializeToString,
-            ),
-    }
-    generic_handler = grpc.method_handlers_generic_handler(
-            'RegistryService', rpc_method_handlers)
-    server.add_generic_rpc_handlers((generic_handler,))
-
-
- # This class is part of an EXPERIMENTAL API.
-class RegistryService(object):
-    """Missing associated documentation comment in .proto file."""
-
-    @staticmethod
-    def RegistryRegister(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/RegistryService/RegistryRegister',
-            chord__pb2.RegisterMessage.SerializeToString,
-            chord__pb2.RegisterMessageResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def RegistryDeregister(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/RegistryService/RegistryDeregister',
-            chord__pb2.DeregisterMessage.SerializeToString,
-            chord__pb2.DeregisterMessageResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def RegistryGetChordInfo(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/RegistryService/RegistryGetChordInfo',
-            chord__pb2.GetChordInfoMessage.SerializeToString,
-            chord__pb2.GetChordInfoMessageResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def RegistryGetFingerTable(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/RegistryService/RegistryGetFingerTable',
-            chord__pb2.GetFingerTablFromRegistryMessage.SerializeToString,
-            chord__pb2.GetFingerTableFromRegistryMessageResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def RegistryGetPredecessor(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/RegistryService/RegistryGetPredecessor',
-            chord__pb2.GetPredecessorMessage.SerializeToString,
-            chord__pb2.GetPredecessorMessageResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def RegistryGetSuccessor(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/RegistryService/RegistryGetSuccessor',
-            chord__pb2.GetSuccessorMessage.SerializeToString,
-            chord__pb2.GetSuccessorMessageResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def Identify(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/RegistryService/Identify',
-            chord__pb2.IdentifyMessage.SerializeToString,
-            chord__pb2.IdentifyMessageResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def GetInfo(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/RegistryService/GetInfo',
-            chord__pb2.GetInfoMessage.SerializeToString,
-            chord__pb2.GetInfoMessageResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-
-class NodeServiceStub(object):
-    """Missing associated documentation comment in .proto file."""
-
-    def __init__(self, channel):
-        """Constructor.
-
-        Args:
-            channel: A grpc.Channel.
-        """
-        self.NodeGetFingerTable = channel.unary_unary(
-                '/NodeService/NodeGetFingerTable',
-                request_serializer=chord__pb2.GetFingerTableMessage.SerializeToString,
-                response_deserializer=chord__pb2.GetFingerTableMessageResponse.FromString,
-                )
-        self.NodeSave = channel.unary_unary(
-                '/NodeService/NodeSave',
-                request_serializer=chord__pb2.SaveMessage.SerializeToString,
-                response_deserializer=chord__pb2.SaveMessageResponse.FromString,
-                )
-        self.NodeRemove = channel.unary_unary(
-                '/NodeService/NodeRemove',
-                request_serializer=chord__pb2.RemoveMessage.SerializeToString,
-                response_deserializer=chord__pb2.RemoveMessageResponse.FromString,
-                )
-        self.NodeFind = channel.unary_unary(
-                '/NodeService/NodeFind',
-                request_serializer=chord__pb2.FindMessage.SerializeToString,
-                response_deserializer=chord__pb2.FindMessageResponse.FromString,
-                )
-        self.Identify = channel.unary_unary(
-                '/NodeService/Identify',
-                request_serializer=chord__pb2.IdentifyMessage.SerializeToString,
-                response_deserializer=chord__pb2.IdentifyMessageResponse.FromString,
-                )
-        self.GetInfo = channel.unary_unary(
-                '/NodeService/GetInfo',
-                request_serializer=chord__pb2.GetInfoMessage.SerializeToString,
-                response_deserializer=chord__pb2.GetInfoMessageResponse.FromString,
-                )
-
-
-class NodeServiceServicer(object):
-    """Missing associated documentation comment in .proto file."""
 
     def NodeGetFingerTable(self, request, context):
         """Missing associated documentation comment in .proto file."""
@@ -365,21 +118,34 @@ class NodeServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def Identify(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
 
-    def GetInfo(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-
-def add_NodeServiceServicer_to_server(servicer, server):
+def add_ServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
+            'RegistryRegister': grpc.unary_unary_rpc_method_handler(
+                    servicer.RegistryRegister,
+                    request_deserializer=chord__pb2.RegisterMessage.FromString,
+                    response_serializer=chord__pb2.RegisterMessageResponse.SerializeToString,
+            ),
+            'RegistryDeregister': grpc.unary_unary_rpc_method_handler(
+                    servicer.RegistryDeregister,
+                    request_deserializer=chord__pb2.DeregisterMessage.FromString,
+                    response_serializer=chord__pb2.DeregisterMessageResponse.SerializeToString,
+            ),
+            'RegistryGetChordInfo': grpc.unary_unary_rpc_method_handler(
+                    servicer.RegistryGetChordInfo,
+                    request_deserializer=chord__pb2.GetChordInfoMessage.FromString,
+                    response_serializer=chord__pb2.GetChordInfoMessageResponse.SerializeToString,
+            ),
+            'RegistryPopulateFingerTable': grpc.unary_unary_rpc_method_handler(
+                    servicer.RegistryPopulateFingerTable,
+                    request_deserializer=chord__pb2.PopulateFingerTableRegistryMessage.FromString,
+                    response_serializer=chord__pb2.PopulateFingerTableRegistryMessageResponse.SerializeToString,
+            ),
+            'Identify': grpc.unary_unary_rpc_method_handler(
+                    servicer.Identify,
+                    request_deserializer=chord__pb2.IdentifyMessage.FromString,
+                    response_serializer=chord__pb2.IdentifyMessageResponse.SerializeToString,
+            ),
             'NodeGetFingerTable': grpc.unary_unary_rpc_method_handler(
                     servicer.NodeGetFingerTable,
                     request_deserializer=chord__pb2.GetFingerTableMessage.FromString,
@@ -400,25 +166,100 @@ def add_NodeServiceServicer_to_server(servicer, server):
                     request_deserializer=chord__pb2.FindMessage.FromString,
                     response_serializer=chord__pb2.FindMessageResponse.SerializeToString,
             ),
-            'Identify': grpc.unary_unary_rpc_method_handler(
-                    servicer.Identify,
-                    request_deserializer=chord__pb2.IdentifyMessage.FromString,
-                    response_serializer=chord__pb2.IdentifyMessageResponse.SerializeToString,
-            ),
-            'GetInfo': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetInfo,
-                    request_deserializer=chord__pb2.GetInfoMessage.FromString,
-                    response_serializer=chord__pb2.GetInfoMessageResponse.SerializeToString,
-            ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'NodeService', rpc_method_handlers)
+            'Service', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
  # This class is part of an EXPERIMENTAL API.
-class NodeService(object):
+class Service(object):
     """Missing associated documentation comment in .proto file."""
+
+    @staticmethod
+    def RegistryRegister(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/Service/RegistryRegister',
+            chord__pb2.RegisterMessage.SerializeToString,
+            chord__pb2.RegisterMessageResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def RegistryDeregister(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/Service/RegistryDeregister',
+            chord__pb2.DeregisterMessage.SerializeToString,
+            chord__pb2.DeregisterMessageResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def RegistryGetChordInfo(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/Service/RegistryGetChordInfo',
+            chord__pb2.GetChordInfoMessage.SerializeToString,
+            chord__pb2.GetChordInfoMessageResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def RegistryPopulateFingerTable(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/Service/RegistryPopulateFingerTable',
+            chord__pb2.PopulateFingerTableRegistryMessage.SerializeToString,
+            chord__pb2.PopulateFingerTableRegistryMessageResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def Identify(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/Service/Identify',
+            chord__pb2.IdentifyMessage.SerializeToString,
+            chord__pb2.IdentifyMessageResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def NodeGetFingerTable(request,
@@ -431,7 +272,7 @@ class NodeService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/NodeService/NodeGetFingerTable',
+        return grpc.experimental.unary_unary(request, target, '/Service/NodeGetFingerTable',
             chord__pb2.GetFingerTableMessage.SerializeToString,
             chord__pb2.GetFingerTableMessageResponse.FromString,
             options, channel_credentials,
@@ -448,7 +289,7 @@ class NodeService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/NodeService/NodeSave',
+        return grpc.experimental.unary_unary(request, target, '/Service/NodeSave',
             chord__pb2.SaveMessage.SerializeToString,
             chord__pb2.SaveMessageResponse.FromString,
             options, channel_credentials,
@@ -465,7 +306,7 @@ class NodeService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/NodeService/NodeRemove',
+        return grpc.experimental.unary_unary(request, target, '/Service/NodeRemove',
             chord__pb2.RemoveMessage.SerializeToString,
             chord__pb2.RemoveMessageResponse.FromString,
             options, channel_credentials,
@@ -482,42 +323,8 @@ class NodeService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/NodeService/NodeFind',
+        return grpc.experimental.unary_unary(request, target, '/Service/NodeFind',
             chord__pb2.FindMessage.SerializeToString,
             chord__pb2.FindMessageResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def Identify(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/NodeService/Identify',
-            chord__pb2.IdentifyMessage.SerializeToString,
-            chord__pb2.IdentifyMessageResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def GetInfo(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/NodeService/GetInfo',
-            chord__pb2.GetInfoMessage.SerializeToString,
-            chord__pb2.GetInfoMessageResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

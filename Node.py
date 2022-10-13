@@ -13,10 +13,10 @@ REGISTRY_HOST = (sys.argv[1]).split(':')[0]
 REGISTRY_PORT = (sys.argv[1]).split(':')[1]
 NODE_HOST = (sys.argv[2]).split(':')[0]
 NODE_PORT = (sys.argv[2]).split(':')[1]
-M = 0
-ID = 0
-PRED = 0
-SUCC = 0
+M = -1
+ID = -1
+PRED = -1
+SUCC = -1
 FINGER_TABLE = []
 DATA = {}
 
@@ -33,7 +33,7 @@ def remove(key):
 def find(key):
     print(f'find {key}')
 
-def chord_map():
+def get_chord_map():
     key_to_node = {}
     pointer_to_ft_item = 0
     for i in range(2**M):
@@ -45,21 +45,13 @@ def chord_map():
             break
     return key_to_node
         
-def id_pred_succ(stub):
-    my_id = ID
-    message = pb2.GetPredecessorMessage(id=ID)
-    my_pred = stub.RegistryGetPredecessor(message)        
-    message = pb2.GetSuccessorMessage(id=ID)
-    my_succ = stub.RegistryGetSuccessor(message)
-    return my_id, my_pred, my_succ
-
 def get_target(key):
     hash_value = zlib.adler32(key.encode())
     target_id = hash_value % 2**M
     return target_id
         
 
-class Handler(pb2_grpc.NodeServiceServicer):
+class Handler(pb2_grpc.ServiceServicer):
     def __init__(self, *args, **kwargs):
         pass  
     
@@ -70,11 +62,10 @@ class Handler(pb2_grpc.NodeServiceServicer):
         text = request.text
         #connection
         channel = grpc.insecure_channel(f'{REGISTRY_HOST}:{REGISTRY_PORT}')
-        stub = pb2_grpc.RegistryServiceStub(channel)
+        stub = pb2_grpc.ServiceServicer(channel)
         #precalcs
         target_id = get_target(key)
-        chord_map = chord_map()
-        my_id, my_pred, my_succ = id_pred_succ(stub)
+        chord_map = get_chord_map()
         
         #output init
         success = False
@@ -96,7 +87,7 @@ class Handler(pb2_grpc.NodeServiceServicer):
                 if node[0] == ID:
                     succ_node = node
             channel = grpc.insecure_channel(f'{succ_node[1]}')
-            stub = pb2_grpc.NodeServiceStub(channel)
+            stub = pb2_grpc.ServiceServicer(channel)
             response = stub.NodeSave(key, text)
             if response.success:
                 success = True
@@ -113,7 +104,7 @@ class Handler(pb2_grpc.NodeServiceServicer):
                 if cur[0] == target_id:
                     next_node = FINGER_TABLE[i-1]
             channel = grpc.insecure_channel(f'{next_node[1]}')
-            stub = pb2_grpc.NodeServiceStub(channel)
+            stub = pb2_grpc.ServiceServicer(channel)
             response = stub.NodeSave(key, text)
             if response.success:
                 success = True
@@ -186,61 +177,69 @@ class Handler(pb2_grpc.NodeServiceServicer):
         return pb2.GetInfoMessageResponse(**reply)
 
 
-def serve():
-    global M, ID, PRED, SUCC, FINGER_TABLE
-    #connecting to registry to register ourselves 
-    channel = grpc.insecure_channel(f'{REGISTRY_HOST}:{REGISTRY_PORT}')
-    stub = pb2_grpc.RegistryServiceStub(channel)
-    #registering
+def populate_ft(stub):
+    global FINGER_TABLE,SUCC, PRED
+    message = pb2.PopulateFingerTableRegistryMessage(id=ID)
+    response = stub.RegistryPopulateFingerTable(message)
+    temp_ft = []
+    for item in response.nodes:
+        chord_id = item.chord_id
+        chord_ip_address = item.chord_ip_address 
+        temp_ft.append((chord_id, chord_ip_address))        
+    FINGER_TABLE = temp_ft
+    PRED = response.pred
+    SUCC = FINGER_TABLE[0][0]
+    
+def register(stub):
+    global ID, PRED, SUCC, M
     message = pb2.RegisterMessage(ipaddr=NODE_HOST, port=NODE_PORT)
     response = stub.RegistryRegister(message)
     ID = response.id
+    PRED = ID
+    SUCC = ID
     M = response.m
     my_success = response.success
     if not my_success:
         print(f'Registring Unsuccessful')
-    print(f'{response}') 
 
-    #CORRECT -----------------------------------------
-
-    message = pb2.GetFingerTablFromRegistryMessage(id=ID)
-    response = stub.RegistryGetFingerTable(message)
-    FINGER_TABLE = response.nodes
-    print(response)
+def serve():
+    global M, ID, PRED, SUCC, FINGER_TABLE
+    #connecting to registry to register ourselves 
+    channel = grpc.insecure_channel(f'{REGISTRY_HOST}:{REGISTRY_PORT}')
+    stub = pb2_grpc.ServiceStub(channel)
     
-    #CORRECT -----------------------------------------
-
-    message = pb2.GetPredecessorMessage(id=ID)
-    print(message)
-    PRED = stub.RegistryGetPredecessor(message)        
-    PRED = PRED.pred
-    message = pb2.GetSuccessorMessage(id=ID)
-    SUCC = stub.RegistryGetSuccessor(message)
-    SUCC = SUCC.succ
+    #registering
+    register(stub)    
+    #populate finger table
+    populate_ft(stub)
+    
     print(f'assigned node_id={ID}, successor_id={SUCC}, predecessor_id={PRED}')   
-    
-    #CORRECT -----------------------------------------
 
     #starting a server to receive queries 
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    pb2_grpc.add_NodeServiceServicer_to_server(Handler(), server)
+    pb2_grpc.add_ServiceServicer_to_server(Handler(), server)
     server.add_insecure_port(f'{NODE_HOST}:{NODE_PORT}')
     server.start()
-    try:
-        server.wait_for_termination()
-    except KeyboardInterrupt:
-        #Deregistering
-        #notify successor
-        #transfer data to successor
-        #notify predecessor about new successor
-        message = pb2.DeregisterMessage(id=ID)
-        response = stub.RegistryDeregister(message)
-        if response.success:
-            print(f'Deregistered Successfully')
-        else:
-            print(f'Deregistring Unsuccessful: {response.message}')
-        print("Terminating\n")
-        sys.exit(0)
+    while True:
+        try:
+            while True:
+                x=server.wait_for_termination(1)
+                if x:
+                    populate_ft(stub)
+                    print(f'assigned node_id={ID}, successor_id={SUCC}, predecessor_id={PRED}')
+        except KeyboardInterrupt:
+            #Deregistering
+            #notify successor
+            #transfer data to successor
+            #notify predecessor about new successor
+            message = pb2.DeregisterMessage(id=ID)
+            response = stub.RegistryDeregister(message)
+            if response.success:
+                print(f'Deregistered Successfully')
+            else:
+                print(f'Deregistring Unsuccessful: {response.message}')
+            print("Terminating\n")
+            sys.exit(0)
 
 if __name__ == "__main__":
     random.seed(0)
