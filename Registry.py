@@ -12,28 +12,26 @@ REGISTRY_PORT = (sys.argv[1]).split(':')[1]
 MAX_CHORD_SIZE = int(sys.argv[2])
 
 NODES_MAX_NUM = 2 ** MAX_CHORD_SIZE - 1
-curr_nodes_size = 0
-chord = {}
-
-
+NODES_COUNT = 0
+CHORD = {}
 
 
 def  get_successor(node_id):
     for i in range(node_id, NODES_MAX_NUM+1):
-        if not chord.get(i) is None:
+        if i in CHORD:
             return i
     for i in range(0, node_id):
-        if not chord.get(i) is None:
+        if i in CHORD:
             return i
     return -1
 
 
 def get_predecessor(node_id):
     for i in range(node_id-1, 0, -1):
-        if not chord.get(i) is None:
+        if i in CHORD:
             return i
     for i in range(NODES_MAX_NUM, node_id-1, -1):
-        if not chord.get(i) is None:
+        if i in CHORD:
             return i
     return -1
 
@@ -43,65 +41,53 @@ class Handler(pb2_grpc.ServiceServicer):
         pass
 
     def RegistryRegister(self, request, context):
-        global chord, curr_nodes_size
+        global CHORD, NODES_COUNT
         
+        #Input
         ipaddr = request.ipaddr
         port = request.port
 
-        if curr_nodes_size == NODES_MAX_NUM:
-            return -1, "The chord ring is full already"
+        #check if chord is full
+        if NODES_COUNT == NODES_MAX_NUM:
+            return pb2.RegisterMessageResponse(**{"success": False, "id": -1, "m":MAX_CHORD_SIZE})
 
         generated_id = random.randint(0, NODES_MAX_NUM)
-        while chord.get(generated_id):
+        while CHORD.get(generated_id): #check if the id already exists
             generated_id = random.randint(0, NODES_MAX_NUM)
-        chord[generated_id] = f'{ipaddr}:{port}'
-        curr_nodes_size += 1
-        
-        m = MAX_CHORD_SIZE
-
-        if generated_id != -1:
-            reply = {"success": True, "id": generated_id, "m": m}
-        else:
-            reply = {"success": False, "id": generated_id, "m": m}
-
-        return pb2.RegisterMessageResponse(**reply)
+        CHORD[generated_id] = f'{ipaddr}:{port}'
+        NODES_COUNT += 1
+        return pb2.RegisterMessageResponse(**{"success": True, "id": generated_id, "m": MAX_CHORD_SIZE})
 
     def RegistryDeregister(self, request, context):
-        global chord, curr_nodes_size
+        global CHORD, NODES_COUNT
         node_id = request.id
         sucess = False
         message = "Id does not exist"
-        if chord.get(node_id):
-            del chord[node_id]
-            curr_nodes_size -= 1
+        if CHORD.get(node_id):
+            del CHORD[node_id]
+            NODES_COUNT -= 1
             sucess = True
             message = "Node deregistered"
-        reply = {"success": sucess, "message": message}
-        return pb2.DeregisterMessageResponse(**reply)
+        return pb2.DeregisterMessageResponse(**{"success": sucess, "message": message})
 
     def RegistryGetChordInfo(self, request, context):
         chord_info = []
-        for k, v in chord.items():
+        for k, v in CHORD.items():
             chord_info.append({"first": k, "second": v})
-        print(chord_info)
-        reply = {"nodes": chord_info}
-        return pb2.GetChordInfoMessageResponse(**reply)
+        return pb2.GetChordInfoMessageResponse(**{"nodes": chord_info})
 
     def RegistryPopulateFingerTable(self, request, context):
-        print(chord)
         node_id = request.id
         FT = []
         for i in range(1, MAX_CHORD_SIZE+1):
             tmp = get_successor((node_id + 2 ** (i - 1))% (2 ** MAX_CHORD_SIZE)) 
-            if tmp != -1 and not {"first":tmp, "second": chord.get(tmp)} in FT:
-                FT.append({"first": tmp, "second": chord.get(tmp)})
+            if tmp != -1 and not {"first":tmp, "second": CHORD.get(tmp)} in FT:
+                FT.append({"first": tmp, "second": CHORD.get(tmp)})
         predecessor = get_predecessor(node_id)
-        reply = {"pred": predecessor, "nodes": FT}
-        return pb2.PopulateFingerTableRegistryMessageResponse(**reply)
+        return pb2.PopulateFingerTableRegistryMessageResponse(**{"pred": predecessor, "nodes": FT})
 
     def Identify(self, request, context):
-        reply = {"service": "Registry"}
-        return pb2.IdentifyMessageResponse(**reply)
+        return pb2.IdentifyMessageResponse(**{"service": "Registry"})
 
 
 if __name__ == "__main__":
@@ -113,4 +99,4 @@ if __name__ == "__main__":
     try:
         server.wait_for_termination()
     except KeyboardInterrupt:
-        print("Registry shutting down")
+        print("Registry shutting down\n")
