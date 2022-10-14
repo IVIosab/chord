@@ -1,5 +1,3 @@
-from email import message
-from glob import glob
 import grpc
 import chord_pb2 as pb2
 import chord_pb2_grpc as pb2_grpc
@@ -21,21 +19,17 @@ if __name__ == '__main__':
             if type == "connect":
                 print(rest[0])
                 channel = grpc.insecure_channel(rest[0])
-                stub = pb2_grpc.RegistryServiceStub(channel)
+                stub = pb2_grpc.ServiceStub(channel)
                 message = pb2.IdentifyMessage()
-                try:
-                    service = stub.Identify(message).service
-                except:
-                    service = "Node"
-                print(service)
-                if service == "Node":
-                    stub = pb2_grpc.NodeServiceStub
+                service = stub.Identify(message).service
+                
             elif type == "get_info":
-                message = pb2.GetInfoMessage()
-                info = stub.GetInfo(message).nodes
-                print(info)
+                print("info")
             elif type == "save":
-                print('save')
+                message = pb2.SaveMessage(key=str(rest[0]), text=str(rest[1]))
+                print(message)
+                response = stub.NodeSave(message)
+                print(response)
             elif type == "remove":
                 print('remove')
             elif type == "find":

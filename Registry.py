@@ -71,11 +71,10 @@ class Handler(pb2_grpc.ServiceServicer):
     def RegistryDeregister(self, request, context):
         global chord, curr_nodes_size
         node_id = request.id
-        id_from_chord = chord[node_id]
         sucess = False
         message = "Id does not exist"
-        if id_from_chord:
-            del chord[id_from_chord]
+        if chord.get(node_id):
+            del chord[node_id]
             curr_nodes_size -= 1
             sucess = True
             message = "Node deregistered"
@@ -88,6 +87,7 @@ class Handler(pb2_grpc.ServiceServicer):
         return pb2.GetChordInfoMessageResponse(**reply)
 
     def RegistryPopulateFingerTable(self, request, context):
+        print(chord)
         node_id = request.id
         FT = []
         for i in range(1, MAX_CHORD_SIZE+1):
