@@ -39,7 +39,25 @@ def between_X_and_Y(target_id, X, Y):
             return False
         if ((X+i)%(2**M)) == target_id:
             return True
-    
+
+def remove_data(id):
+    global DATA
+    data = []
+    for item in list(DATA.items()):
+        k = item[0]
+        v = item[1]
+        if not between_X_and_Y(k, id+1, ID):
+            data.append({'first': k, 'second':v})
+            del(DATA[k])
+    return data
+
+def add_data(nodes):
+    global DATA
+    for item in nodes:
+        k = item.first
+        v = item.second
+        DATA[k] = v
+    return True
 
 def get_next(target_id):
     next_node = FINGER_TABLE[len(FINGER_TABLE)-1]
@@ -78,7 +96,7 @@ class Handler(pb2_grpc.ServiceServicer):
         
         #precalcs
         target_id = get_target(key)
-        print(target_id)
+        
         #output init
         success = False
         message = ""  
@@ -86,14 +104,14 @@ class Handler(pb2_grpc.ServiceServicer):
         
         #algo
         if between_pred_and_me(target_id) : #Works
-            if DATA.get(key):
+            if DATA.get(target_id):
                 success = False
                 message = f'{key} is already exist in node {ID}'
             else:
                 success = True
                 id = ID
                 message = f'{key} is saved in node {ID}'
-                DATA[key] = text
+                DATA[target_id] = text
         elif between_me_and_succ(target_id): #Works
             succ_node = FINGER_TABLE[0]
             
@@ -109,7 +127,6 @@ class Handler(pb2_grpc.ServiceServicer):
                 message = response.message
             else:
                 success = False
-                id = -1
                 message = response.message
         else:
             next_node = get_next(target_id)
@@ -126,7 +143,6 @@ class Handler(pb2_grpc.ServiceServicer):
                 message = response.message
             else:
                 success = False
-                id = -1
                 message = response.message
         reply = {"success": success, "id": id, "message": message}
         print(reply)
@@ -143,7 +159,7 @@ class Handler(pb2_grpc.ServiceServicer):
         
         #precalcs
         target_id = get_target(key)
-        print(target_id)
+        
         #output init
         success = False
         message = ""  
@@ -151,11 +167,11 @@ class Handler(pb2_grpc.ServiceServicer):
         
         #algo
         if between_pred_and_me(target_id) :
-            if DATA.get(key):
+            if DATA.get(target_id):
                 success = True
                 id = ID
                 message = f'{key} is deleted from node {ID}'
-                del(DATA[key])
+                del(DATA[target_id])
             else:
                 success = False
                 message = f'{key} does not exist in node {ID}'
@@ -207,7 +223,7 @@ class Handler(pb2_grpc.ServiceServicer):
         
         #precalcs
         target_id = get_target(key)
-        print(target_id)
+        
         #output init
         success = False
         message = ""  
@@ -217,7 +233,7 @@ class Handler(pb2_grpc.ServiceServicer):
         
         #algo
         if between_pred_and_me(target_id) : #Works
-            if DATA.get(key):
+            if DATA.get(target_id):
                 success = True
                 id = ID
                 message = f'{key} is saved in node {ID}'
@@ -280,6 +296,17 @@ class Handler(pb2_grpc.ServiceServicer):
         reply = {"service": "Node"}
         return pb2.IdentifyMessageResponse(**reply)
 
+    def GetDataFromSuccessor(self, request, context):
+        id = request.id
+        reply = {"nodes": remove_data(id)}
+        return pb2.GetDataFromSuccessorMessageResponse(**reply)
+        
+    def GiveDataToSuccessor(self, request, context):
+        nodes = request.nodes
+        reply = {"success": add_data(nodes)}
+        return pb2.GetDataFromSuccessorMessageResponse(**reply)
+        
+
 
 def populate_ft(stub):
     global FINGER_TABLE,SUCC, PRED
@@ -316,6 +343,13 @@ def serve():
     register(stub)    
     #populate finger table
     populate_ft(stub)
+
+    if ID != SUCC:
+        channel = grpc.insecure_channel(f'{FINGER_TABLE[0][1]}')
+        stub = pb2_grpc.ServiceStub(channel)
+        message = pb2.GetDataFromSuccessorMessage(id=ID)
+        response = stub.GetDataFromSuccessor(message)
+        add_data(response.nodes)
     
     print(f'assigned node_id={ID}, successor_id={SUCC}, predecessor_id={PRED}')   
 
@@ -324,13 +358,16 @@ def serve():
     pb2_grpc.add_ServiceServicer_to_server(Handler(), server)
     server.add_insecure_port(f'{NODE_HOST}:{NODE_PORT}')
     server.start()
+    channel = grpc.insecure_channel(f'{REGISTRY_HOST}:{REGISTRY_PORT}')
+    stub = pb2_grpc.ServiceStub(channel)
     while True:
         try: 
             x=server.wait_for_termination(1)
             if x:
                 populate_ft(stub)
                 print(f'assigned node_id={ID}, successor_id={SUCC}, predecessor_id={PRED}')
-                print(FINGER_TABLE)
+                print(f'FINGER_TABLE: {FINGER_TABLE}')
+                print(f'DATA: {DATA}')
         except grpc.RpcError:
             print("Registry Terminated")
             sys.exit(0)
