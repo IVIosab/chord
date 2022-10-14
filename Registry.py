@@ -82,7 +82,7 @@ class Handler(pb2_grpc.ServiceServicer):
     def RegistryGetChordInfo(self, request, context):
         chord_info = []
         for k, v in chord.items():
-            chord_info.append({"chord_id": k, "chord_ip_address": v})
+            chord_info.append({"first": k, "second": v})
         print(chord_info)
         reply = {"nodes": chord_info}
         return pb2.GetChordInfoMessageResponse(**reply)
@@ -93,8 +93,8 @@ class Handler(pb2_grpc.ServiceServicer):
         FT = []
         for i in range(1, MAX_CHORD_SIZE+1):
             tmp = get_successor((node_id + 2 ** (i - 1))% (2 ** MAX_CHORD_SIZE)) 
-            if tmp != -1 and not {"chord_id":tmp, "chord_ip_address": chord.get(tmp)} in FT:
-                FT.append({"chord_id": tmp, "chord_ip_address": chord.get(tmp)})
+            if tmp != -1 and not {"first":tmp, "second": chord.get(tmp)} in FT:
+                FT.append({"first": tmp, "second": chord.get(tmp)})
         predecessor = get_predecessor(node_id)
         reply = {"pred": predecessor, "nodes": FT}
         return pb2.PopulateFingerTableRegistryMessageResponse(**reply)

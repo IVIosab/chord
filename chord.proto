@@ -7,6 +7,8 @@ service Service{
     rpc RegistryGetChordInfo(GetChordInfoMessage) returns (GetChordInfoMessageResponse);
     rpc RegistryPopulateFingerTable(PopulateFingerTableRegistryMessage) returns (PopulateFingerTableRegistryMessageResponse);
     rpc Identify(IdentifyMessage) returns(IdentifyMessageResponse);
+    rpc GiveDataToSuccessor(GiveDataToSuccessorMessage) returns(GiveDataToSuccessorMessageResponse);
+    rpc GetDataFromSuccessor(GetDataFromSuccessorMessage) returns(GetDataFromSuccessorMessageResponse);
     rpc NodeGetFingerTable(GetFingerTableMessage) returns (GetFingerTableMessageResponse);
     rpc NodeSave(SaveMessage) returns (SaveMessageResponse);
     rpc NodeRemove(RemoveMessage) returns (RemoveMessageResponse);
@@ -48,8 +50,8 @@ message PopulateFingerTableRegistryMessageResponse{
     repeated Node nodes = 2;
 }
 message Node{
-    int32 chord_id = 1;
-    string chord_ip_address = 2;
+    int32 first = 1;
+    string second = 2;
 }
 
 
@@ -59,11 +61,26 @@ message IdentifyMessageResponse{
     string service = 1;
 }
 
+// give data to sucessor
+message GiveDataToSuccessorMessage{
+    repeated Node nodes = 1;
+}
+message GiveDataToSuccessorMessageResponse{
+    bool success = 1;
+}
+
+// get data from successor
+message GetDataFromSuccessorMessage{
+    int32 id = 1;
+}
+message GetDataFromSuccessorMessageResponse{
+    repeated Node nodes = 1;
+}
 
 //get_finger_table
 message GetFingerTableMessage{}
 message GetFingerTableMessageResponse{
-    repeated Node finger_table = 1;
+    repeated Node nodes = 1;
 }
 
 //save

@@ -53,7 +53,7 @@ def get_next(target_id):
 def get_finger_table():
     finger_table = []
     for i in range(len(FINGER_TABLE)):
-        finger_table.append({"chord_id": FINGER_TABLE[i][0], "chord_ip_address": FINGER_TABLE[i][1]})
+        finger_table.append({"first": FINGER_TABLE[i][0], "second": FINGER_TABLE[i][1]})
     return finger_table
 
 def get_target(key):
@@ -273,7 +273,7 @@ class Handler(pb2_grpc.ServiceServicer):
         return pb2.FindMessageResponse(**reply)
 
     def NodeGetFingerTable(self, request, context):
-        reply = {"finger_table": get_finger_table()}
+        reply = {"nodes": get_finger_table()}
         return pb2.GetFingerTableMessageResponse(**reply)
 
     def Identify(self, request, context):
@@ -287,9 +287,9 @@ def populate_ft(stub):
     response = stub.RegistryPopulateFingerTable(message)
     temp_ft = []
     for item in response.nodes:
-        chord_id = item.chord_id
-        chord_ip_address = item.chord_ip_address 
-        temp_ft.append((chord_id, chord_ip_address))        
+        first = item.first
+        second = item.second 
+        temp_ft.append((first, second))        
     FINGER_TABLE = temp_ft
     PRED = response.pred
     SUCC = FINGER_TABLE[0][0]
