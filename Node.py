@@ -51,12 +51,10 @@ def remove_data(id):
             del(DATA[k])
     return data
 
-def add_data(nodes):
+def add_data(keys, values):
     global DATA
-    for item in nodes:
-        k = item.first
-        v = item.second
-        DATA[k] = v
+    for i in range(len(keys)):
+        DATA[keys[i]] = values[i]
     return True
 
 def get_next(target_id):
@@ -302,9 +300,10 @@ class Handler(pb2_grpc.ServiceServicer):
         return pb2.GetDataFromSuccessorMessageResponse(**reply)
         
     def GiveDataToSuccessor(self, request, context):
-        nodes = request.nodes
-        reply = {"success": add_data(nodes)}
-        return pb2.GetDataFromSuccessorMessageResponse(**reply)
+        keys = request.keys
+        values = request.values
+        reply = {"success": add_data(keys, values)}
+        return pb2.GiveDataToSuccessorMessageResponse(**reply)
         
 
 
@@ -334,7 +333,7 @@ def register(stub):
         print(f'Registring Unsuccessful')
 
 def serve():
-    global M, ID, PRED, SUCC, FINGER_TABLE
+    global DATA, M, ID, PRED, SUCC, FINGER_TABLE
     #connecting to registry to register ourselves 
     channel = grpc.insecure_channel(f'{REGISTRY_HOST}:{REGISTRY_PORT}')
     stub = pb2_grpc.ServiceStub(channel)
@@ -349,7 +348,12 @@ def serve():
         stub = pb2_grpc.ServiceStub(channel)
         message = pb2.GetDataFromSuccessorMessage(id=ID)
         response = stub.GetDataFromSuccessor(message)
-        add_data(response.nodes)
+        keys = []
+        values = []
+        for item in response.nodes:
+            keys.append(item.first)
+            values.append(item.second)
+        add_data(keys=keys,values=values)
     
     print(f'assigned node_id={ID}, successor_id={SUCC}, predecessor_id={PRED}')   
 
@@ -372,11 +376,20 @@ def serve():
             print("Registry Terminated")
             sys.exit(0)
         except KeyboardInterrupt:
-            #transfer data to successor TODO
             message = pb2.DeregisterMessage(id=ID)
             response = stub.RegistryDeregister(message)
-            
-
+            keys = []
+            values = []
+            for item in list(DATA.items()):
+                k = item[0]
+                v = item[1]
+                keys.append(k)
+                values.append(v)
+                del(DATA[k])
+            channel = grpc.insecure_channel(f'{FINGER_TABLE[0][1]}')
+            stub = pb2_grpc.ServiceStub(channel)
+            message = pb2.GiveDataToSuccessorMessage(keys=keys, values=values)
+            response = stub.GiveDataToSuccessor(message)
             print("Terminating\n")
             sys.exit(0)
 

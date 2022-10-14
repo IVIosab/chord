@@ -63,7 +63,8 @@ message IdentifyMessageResponse{
 
 // give data to sucessor
 message GiveDataToSuccessorMessage{
-    repeated Node nodes = 1;
+    repeated int32 keys = 1;
+    repeated string values = 2;
 }
 message GiveDataToSuccessorMessageResponse{
     bool success = 1;
