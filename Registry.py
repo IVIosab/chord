@@ -1,6 +1,4 @@
-from email import message
 import random
-
 import chord_pb2_grpc
 import chord_pb2_grpc as pb2_grpc
 import chord_pb2 as pb2
@@ -21,7 +19,7 @@ chord = {}
 
 
 def  get_successor(node_id):
-    for i in range(node_id, NODES_MAX_NUM):
+    for i in range(node_id, NODES_MAX_NUM+1):
         if not chord.get(i) is None:
             return i
     for i in range(0, node_id):
@@ -53,9 +51,9 @@ class Handler(pb2_grpc.ServiceServicer):
         if curr_nodes_size == NODES_MAX_NUM:
             return -1, "The chord ring is full already"
 
-        generated_id = random.randrange(0, NODES_MAX_NUM)
+        generated_id = random.randint(0, NODES_MAX_NUM)
         while chord.get(generated_id):
-            generated_id = random.randrange(0, NODES_MAX_NUM)
+            generated_id = random.randint(0, NODES_MAX_NUM)
         chord[generated_id] = f'{ipaddr}:{port}'
         curr_nodes_size += 1
         
@@ -82,7 +80,10 @@ class Handler(pb2_grpc.ServiceServicer):
         return pb2.DeregisterMessageResponse(**reply)
 
     def RegistryGetChordInfo(self, request, context):
-        chord_info = [(k, v) for k, v in chord.items()]
+        chord_info = []
+        for k, v in chord.items():
+            chord_info.append({"chord_id": k, "chord_ip_address": v})
+        print(chord_info)
         reply = {"nodes": chord_info}
         return pb2.GetChordInfoMessageResponse(**reply)
 

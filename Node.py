@@ -1,9 +1,5 @@
-from ast import Global
-from glob import glob
-import grp
 import random
 import sys
-from traceback import print_tb
 import grpc
 import zlib
 import chord_pb2 as pb2
@@ -37,36 +33,29 @@ def between_me_and_succ(target_id):
         if ((ID+i)%(2**M)) == target_id:
             return True
 
+def between_X_and_Y(target_id, X, Y):
+    for i in range (2**M):
+        if ((X+i)%(2**M)) == Y+1:
+            return False
+        if ((X+i)%(2**M)) == target_id:
+            return True
+    
 
+def get_next(target_id):
+    next_node = FINGER_TABLE[len(FINGER_TABLE)-1]
+    for i in range(len(FINGER_TABLE)-1):
+        cur = FINGER_TABLE[i]
+        next = FINGER_TABLE[i+1]
+        if between_X_and_Y(target_id, cur[0], next[0]):
+            next_node = cur
+    return next_node
 
 def get_finger_table():
-    finger_table = [(k, v) for k, v in FINGER_TABLE.items()]
+    finger_table = []
+    for i in range(len(FINGER_TABLE)):
+        finger_table.append({"chord_id": FINGER_TABLE[i][0], "chord_ip_address": FINGER_TABLE[i][1]})
     return finger_table
 
-def save(key, text):
-    print(f'save {key} <> {text}')
-
-def remove(key):
-    print(f'remove {key}')
-
-def find(key):
-    print(f'find {key}')
-
-def get_chord_map():
-    key_to_node = {}
-    pointer_to_ft_item = 0
-    for i in range(2**M):
-        cur_key = i+ID%(2**M)
-        key_to_node[cur_key] = pointer_to_ft_item
-        print(f'curkey: {cur_key} ||| keytonode: {key_to_node[cur_key]}')
-        if cur_key==FINGER_TABLE[pointer_to_ft_item][0]:
-            pointer_to_ft_item+=1
-        if pointer_to_ft_item > len(FINGER_TABLE):
-            break
-    print("key to node")
-    print(key_to_node)
-    return key_to_node
-        
 def get_target(key):
     hash_value = zlib.adler32(key.encode())
     target_id = hash_value % 2**M
@@ -106,18 +95,14 @@ class Handler(pb2_grpc.ServiceServicer):
                 message = f'{key} is saved in node {ID}'
                 DATA[key] = text
         elif between_me_and_succ(target_id): #Works
-            print('between me and succ')
             succ_node = FINGER_TABLE[0]
-            print(succ_node)
+            
             channel = grpc.insecure_channel(f'{succ_node[1]}')
-            print("channel created")
-            print(channel)
             stub = pb2_grpc.ServiceStub(channel)
-            print("stub created")
-            print(stub)
+            
             message = pb2.SaveMessage(key=key, text=text)
             response = stub.NodeSave(message)
-            print(response)
+            
             if response.success:
                 success = True
                 id = response.id
@@ -126,17 +111,15 @@ class Handler(pb2_grpc.ServiceServicer):
                 success = False
                 id = -1
                 message = response.message
-            print('6666666666666666666666666')
         else:
-            print('elseeeeeeeeeeeeeeeeeeeeee')
-            next_node = FINGER_TABLE[len(FINGER_TABLE)-1]
-            for i in range(len(FINGER_TABLE)):
-                cur = FINGER_TABLE[i]
-                if cur[0] == target_id:
-                    next_node = FINGER_TABLE[i-1]
+            next_node = get_next(target_id)
+            
             channel = grpc.insecure_channel(f'{next_node[1]}')
             stub = pb2_grpc.ServiceStub(channel)
-            response = stub.NodeSave(key, text)
+            
+            message = pb2.SaveMessage(key=key, text=text)
+            response = stub.NodeSave(message)
+            
             if response.success:
                 success = True
                 id = response.id
@@ -145,56 +128,148 @@ class Handler(pb2_grpc.ServiceServicer):
                 success = False
                 id = -1
                 message = response.message
-            print('77777777777777777777777777777')
         reply = {"success": success, "id": id, "message": message}
-        print('88888888888888888888888888')
         print(reply)
         return pb2.SaveMessageResponse(**reply)
 
     def NodeRemove(self, request, context):
         global DATA
+        #input
         key = request.key
-        hash_value = zlib.adler32(key.encode())
-        target_id = hash_value % 2**M
-        success = True
-        id = 1
-        message = ""
-        if target_id == ID:
-            if DATA.get(key) != None:
+        
+        #connection
+        channel = grpc.insecure_channel(f'{REGISTRY_HOST}:{REGISTRY_PORT}')
+        stub = pb2_grpc.ServiceStub(channel)
+        
+        #precalcs
+        target_id = get_target(key)
+        print(target_id)
+        #output init
+        success = False
+        message = ""  
+        id = -1
+        
+        #algo
+        if between_pred_and_me(target_id) :
+            if DATA.get(key):
                 success = True
-                del DATA[key]
-                message = f'{key} is removed from node {ID}'
+                id = ID
+                message = f'{key} is deleted from node {ID}'
+                del(DATA[key])
             else:
                 success = False
                 message = f'{key} does not exist in node {ID}'
+        elif between_me_and_succ(target_id):
+            succ_node = FINGER_TABLE[0]
+            
+            channel = grpc.insecure_channel(f'{succ_node[1]}')
+            stub = pb2_grpc.ServiceStub(channel)
+            
+            message = pb2.RemoveMessage(key=key)
+            response = stub.NodeRemove(message)
+            
+            if response.success:
+                success = True
+                id = response.id
+                message = response.message
+            else:
+                success = False
+                id = -1
+                message = response.message
         else:
-            #lookup
-            test = 1
-        reply = {"success": success, "id": id, "message":message}
-        return pb2.DeregisterMessageResponse(**reply)
+            next_node = get_next(target_id)
+            
+            channel = grpc.insecure_channel(f'{next_node[1]}')
+            stub = pb2_grpc.ServiceStub(channel)
+            
+            message = pb2.RemoveMessage(key=key)
+            response = stub.NodeRemove(message)
+            
+            if response.success:
+                success = True
+                id = response.id
+                message = response.message
+            else:
+                success = False
+                id = -1
+                message = response.message
+        reply = {"success": success, "id": id, "message": message}
+        print(reply)
+        return pb2.RemoveMessageResponse(**reply)
 
     def NodeFind(self, request, context):
-        global DATA
-        key = request.key 
-        hash_value = zlib.adler32(key.encode())
-        target_id = hash_value % 2**M
-        success = True
-        id = 1
-        message = ""
+        #input
+        key = request.key
+        
+        #connection
+        channel = grpc.insecure_channel(f'{REGISTRY_HOST}:{REGISTRY_PORT}')
+        stub = pb2_grpc.ServiceStub(channel)
+        
+        #precalcs
+        target_id = get_target(key)
+        print(target_id)
+        #output init
+        success = False
+        message = ""  
+        id = -1
         ipaddr = ""
         port = ""
-        if target_id == ID:
-            if DATA.get(key) != None:
+        
+        #algo
+        if between_pred_and_me(target_id) : #Works
+            if DATA.get(key):
                 success = True
-                del DATA[key]
-                message = f'{key} is removed from node {ID}'
+                id = ID
+                message = f'{key} is saved in node {ID}'
+                ipaddr = NODE_HOST
+                port = NODE_PORT
             else:
                 success = False
                 message = f'{key} does not exist in node {ID}'
+        elif between_me_and_succ(target_id): #Works
+            succ_node = FINGER_TABLE[0]
+            
+            channel = grpc.insecure_channel(f'{succ_node[1]}')
+            stub = pb2_grpc.ServiceStub(channel)
+            
+            message = pb2.FindMessage(key=key)
+            response = stub.NodeFind(message)
+            
+            if response.success:
+                success = True
+                id = response.id
+                message = response.message
+                ipaddr = response.ipaddr
+                port = response.port
+            else:
+                success = False
+                id = -1
+                message = response.message
+                ipaddr = ""
+                port = ""
         else:
-            #lookup
-            test = 1
-        reply = {"success": success, "id": id, "message":message, "ipaddr": ipaddr, "port": port}
+            next_node = get_next(target_id)
+            
+            channel = grpc.insecure_channel(f'{next_node[1]}')
+            stub = pb2_grpc.ServiceStub(channel)
+            
+            message = pb2.FindMessage(key=key)
+            response = stub.NodeFind(message)
+            
+            if response.success:
+                success = True
+                id = response.id
+                message = response.message
+                ipaddr = response.ipaddr
+                port = response.port
+            else:
+                success = False
+                id = -1
+                message = response.message
+                ipaddr = ""
+                port = ""
+        reply = {"success": success, "id": id, "message": message, "ipaddr": ipaddr, "port": port}
+        print(reply)
         return pb2.FindMessageResponse(**reply)
 
     def NodeGetFingerTable(self, request, context):
@@ -204,11 +279,6 @@ class Handler(pb2_grpc.ServiceServicer):
     def Identify(self, request, context):
         reply = {"service": "Node"}
         return pb2.IdentifyMessageResponse(**reply)
-
-    
-    def GetInfo(self,request,context):
-        reply = {"nodes": get_finger_table()}
-        return pb2.GetInfoMessageResponse(**reply)
 
 
 def populate_ft(stub):
@@ -260,6 +330,7 @@ def serve():
             if x:
                 populate_ft(stub)
                 print(f'assigned node_id={ID}, successor_id={SUCC}, predecessor_id={PRED}')
+                print(FINGER_TABLE)
         except grpc.RpcError:
             print("Registry Terminated")
             sys.exit(0)

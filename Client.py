@@ -22,18 +22,32 @@ if __name__ == '__main__':
                 stub = pb2_grpc.ServiceStub(channel)
                 message = pb2.IdentifyMessage()
                 service = stub.Identify(message).service
-                
             elif type == "get_info":
-                print("info")
+                if service == "Node":
+                    message = pb2.GetFingerTableMessage()
+                    print(message)
+                    response = stub.NodeGetFingerTable(message)
+                    print(response)
+                else:
+                    message = pb2.GetChordInfoMessage()
+                    print(message)
+                    response = stub.RegistryGetChordInfo(message)
+                    print(response) 
             elif type == "save":
                 message = pb2.SaveMessage(key=str(rest[0]), text=str(rest[1]))
                 print(message)
                 response = stub.NodeSave(message)
                 print(response)
             elif type == "remove":
-                print('remove')
+                message = pb2.RemoveMessage(key=str(rest[0]))
+                print(message)
+                response = stub.NodeRemove(message)
+                print(response)
             elif type == "find":
-                print('find')
+                message = pb2.FindMessage(key=str(rest[0]))
+                print(message)
+                response = stub.NodeFind(message)
+                print(response)
             elif type == 'quit':
                 print("Shutting Down\n")
                 sys.exit(0)
