@@ -2,113 +2,103 @@ syntax = "proto3";
 
 
 service Service{
+    //Registry functions
     rpc RegistryRegister(RegisterMessage) returns (RegisterMessageResponse);
     rpc RegistryDeregister(DeregisterMessage) returns (DeregisterMessageResponse);
     rpc RegistryGetChordInfo(GetChordInfoMessage) returns (GetChordInfoMessageResponse);
     rpc RegistryPopulateFingerTable(PopulateFingerTableRegistryMessage) returns (PopulateFingerTableRegistryMessageResponse);
-    rpc Identify(IdentifyMessage) returns(IdentifyMessageResponse);
-    rpc GiveDataToSuccessor(GiveDataToSuccessorMessage) returns(GiveDataToSuccessorMessageResponse);
-    rpc GetDataFromSuccessor(GetDataFromSuccessorMessage) returns(GetDataFromSuccessorMessageResponse);
+    
+    //Node functions
     rpc NodeGetFingerTable(GetFingerTableMessage) returns (GetFingerTableMessageResponse);
     rpc NodeSave(SaveMessage) returns (SaveMessageResponse);
     rpc NodeRemove(RemoveMessage) returns (RemoveMessageResponse);
+    
+    //Utility function
+    rpc Identify(IdentifyMessage) returns(IdentifyMessageResponse);
+    rpc GiveDataToSuccessor(GiveDataToSuccessorMessage) returns(GiveDataToSuccessorMessageResponse); //Only in Node
+    rpc GetDataFromSuccessor(GetDataFromSuccessorMessage) returns(GetDataFromSuccessorMessageResponse); //Only in Node
     rpc NodeFind(FindMessage) returns (FindMessageResponse);
 }
 
-//register
+//Registry Messages
+
+//register(ipaddr, port) 
 message RegisterMessage{
     string ipaddr = 1;
     string port = 2;
 }
+//{id: int, m: int} TODO
 message RegisterMessageResponse{
     bool success = 1;
     int32 id = 2;
     int32 m = 3;
 }
 
-//deregister
+//deregister(id)
 message DeregisterMessage{
     int32 id = 1;
 }
+//{success: bool, message: string}
 message DeregisterMessageResponse{
     bool success = 1;
     string message = 2;
 }
 
-//get_chord_info
-message GetChordInfoMessage{}
-message GetChordInfoMessageResponse{
-    repeated Node nodes = 1;
-}
-
-//populate_finger_table
+//populate_finger_table(id)
 message PopulateFingerTableRegistryMessage{
     int32 id = 1;
 }
+//{pred: int, nodes: Node}
 message PopulateFingerTableRegistryMessageResponse{
     int32 pred = 1;
     repeated Node nodes = 2;
 }
-message Node{
-    int32 first = 1;
-    string second = 2;
-}
 
-
-// identify if node or registry
-message IdentifyMessage{}
-message IdentifyMessageResponse{
-    string service = 1;
-}
-
-// give data to sucessor
-message GiveDataToSuccessorMessage{
-    repeated int32 keys = 1;
-    repeated string values = 2;
-}
-message GiveDataToSuccessorMessageResponse{
-    bool success = 1;
-}
-
-// get data from successor
-message GetDataFromSuccessorMessage{
-    int32 id = 1;
-}
-message GetDataFromSuccessorMessageResponse{
+//get_chord_info()
+message GetChordInfoMessage{}
+//{nodes: Node}
+message GetChordInfoMessageResponse{
     repeated Node nodes = 1;
 }
 
-//get_finger_table
+
+//Node Messages
+
+//get_finger_table()
 message GetFingerTableMessage{}
+//{nodes: Node}
 message GetFingerTableMessageResponse{
     repeated Node nodes = 1;
 }
 
-//save
+//save(key, text)
 message SaveMessage{
     string key = 1;
     string text = 2; 
 }
+//{success: bool, id: int, message: string}
 message SaveMessageResponse{
     bool success = 1;
     int32 id = 2;
     string message = 3;
 }
 
-//remove
+//remove(key)
 message RemoveMessage{
     string key = 1;
 }
+//{success: bool, id: int, message: string}
 message RemoveMessageResponse{
     bool success = 1;
     int32 id = 2;
     string message = 3;
 }
 
-//find
+//find(key)
 message FindMessage{
     string key = 1; 
 }
+//{success: bool, id: int, message: string, ipaddr: string, port: string}
 message FindMessageResponse{
     bool success = 1;
     int32 id = 2;
@@ -116,3 +106,42 @@ message FindMessageResponse{
     string ipaddr = 4;
     string port = 5;
 }
+
+
+//Utility
+
+//{first: int, second: string}
+message Node{
+    int32 first = 1;
+    string second = 2;
+}
+
+//identify()
+message IdentifyMessage{}
+//{service: string} Node|Registry
+message IdentifyMessageResponse{
+    string service = 1;
+}
+
+//give_data_to_successor(keys, values)
+message GiveDataToSuccessorMessage{
+    repeated int32 keys = 1;
+    repeated string values = 2;
+}
+//{success: bool}
+message GiveDataToSuccessorMessageResponse{
+    bool success = 1;
+}
+
+//get_data_from_successor(id)
+message GetDataFromSuccessorMessage{
+    int32 id = 1;
+}
+//{nodes: Node}
+message GetDataFromSuccessorMessageResponse{
+    repeated Node nodes = 1;
+}
+
+
+//TODO merge get_chord and get_finger messages
+//TODO fix register message response
