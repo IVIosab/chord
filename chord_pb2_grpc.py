@@ -34,21 +34,6 @@ class ServiceStub(object):
                 request_serializer=chord__pb2.PopulateFingerTableRegistryMessage.SerializeToString,
                 response_deserializer=chord__pb2.PopulateFingerTableRegistryMessageResponse.FromString,
                 )
-        self.Identify = channel.unary_unary(
-                '/Service/Identify',
-                request_serializer=chord__pb2.IdentifyMessage.SerializeToString,
-                response_deserializer=chord__pb2.IdentifyMessageResponse.FromString,
-                )
-        self.GiveDataToSuccessor = channel.unary_unary(
-                '/Service/GiveDataToSuccessor',
-                request_serializer=chord__pb2.GiveDataToSuccessorMessage.SerializeToString,
-                response_deserializer=chord__pb2.GiveDataToSuccessorMessageResponse.FromString,
-                )
-        self.GetDataFromSuccessor = channel.unary_unary(
-                '/Service/GetDataFromSuccessor',
-                request_serializer=chord__pb2.GetDataFromSuccessorMessage.SerializeToString,
-                response_deserializer=chord__pb2.GetDataFromSuccessorMessageResponse.FromString,
-                )
         self.NodeGetFingerTable = channel.unary_unary(
                 '/Service/NodeGetFingerTable',
                 request_serializer=chord__pb2.GetFingerTableMessage.SerializeToString,
@@ -64,6 +49,21 @@ class ServiceStub(object):
                 request_serializer=chord__pb2.RemoveMessage.SerializeToString,
                 response_deserializer=chord__pb2.RemoveMessageResponse.FromString,
                 )
+        self.Identify = channel.unary_unary(
+                '/Service/Identify',
+                request_serializer=chord__pb2.IdentifyMessage.SerializeToString,
+                response_deserializer=chord__pb2.IdentifyMessageResponse.FromString,
+                )
+        self.GiveDataToSuccessor = channel.unary_unary(
+                '/Service/GiveDataToSuccessor',
+                request_serializer=chord__pb2.GiveDataToSuccessorMessage.SerializeToString,
+                response_deserializer=chord__pb2.GiveDataToSuccessorMessageResponse.FromString,
+                )
+        self.GetDataFromSuccessor = channel.unary_unary(
+                '/Service/GetDataFromSuccessor',
+                request_serializer=chord__pb2.GetDataFromSuccessorMessage.SerializeToString,
+                response_deserializer=chord__pb2.GetDataFromSuccessorMessageResponse.FromString,
+                )
         self.NodeFind = channel.unary_unary(
                 '/Service/NodeFind',
                 request_serializer=chord__pb2.FindMessage.SerializeToString,
@@ -75,7 +75,8 @@ class ServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def RegistryRegister(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Registry functions
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -98,26 +99,9 @@ class ServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def Identify(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def GiveDataToSuccessor(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def GetDataFromSuccessor(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
     def NodeGetFingerTable(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Node functions
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -130,6 +114,27 @@ class ServiceServicer(object):
 
     def NodeRemove(self, request, context):
         """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def Identify(self, request, context):
+        """Utility function
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GiveDataToSuccessor(self, request, context):
+        """Only in Node
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetDataFromSuccessor(self, request, context):
+        """Only in Node
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -163,21 +168,6 @@ def add_ServiceServicer_to_server(servicer, server):
                     request_deserializer=chord__pb2.PopulateFingerTableRegistryMessage.FromString,
                     response_serializer=chord__pb2.PopulateFingerTableRegistryMessageResponse.SerializeToString,
             ),
-            'Identify': grpc.unary_unary_rpc_method_handler(
-                    servicer.Identify,
-                    request_deserializer=chord__pb2.IdentifyMessage.FromString,
-                    response_serializer=chord__pb2.IdentifyMessageResponse.SerializeToString,
-            ),
-            'GiveDataToSuccessor': grpc.unary_unary_rpc_method_handler(
-                    servicer.GiveDataToSuccessor,
-                    request_deserializer=chord__pb2.GiveDataToSuccessorMessage.FromString,
-                    response_serializer=chord__pb2.GiveDataToSuccessorMessageResponse.SerializeToString,
-            ),
-            'GetDataFromSuccessor': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetDataFromSuccessor,
-                    request_deserializer=chord__pb2.GetDataFromSuccessorMessage.FromString,
-                    response_serializer=chord__pb2.GetDataFromSuccessorMessageResponse.SerializeToString,
-            ),
             'NodeGetFingerTable': grpc.unary_unary_rpc_method_handler(
                     servicer.NodeGetFingerTable,
                     request_deserializer=chord__pb2.GetFingerTableMessage.FromString,
@@ -192,6 +182,21 @@ def add_ServiceServicer_to_server(servicer, server):
                     servicer.NodeRemove,
                     request_deserializer=chord__pb2.RemoveMessage.FromString,
                     response_serializer=chord__pb2.RemoveMessageResponse.SerializeToString,
+            ),
+            'Identify': grpc.unary_unary_rpc_method_handler(
+                    servicer.Identify,
+                    request_deserializer=chord__pb2.IdentifyMessage.FromString,
+                    response_serializer=chord__pb2.IdentifyMessageResponse.SerializeToString,
+            ),
+            'GiveDataToSuccessor': grpc.unary_unary_rpc_method_handler(
+                    servicer.GiveDataToSuccessor,
+                    request_deserializer=chord__pb2.GiveDataToSuccessorMessage.FromString,
+                    response_serializer=chord__pb2.GiveDataToSuccessorMessageResponse.SerializeToString,
+            ),
+            'GetDataFromSuccessor': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetDataFromSuccessor,
+                    request_deserializer=chord__pb2.GetDataFromSuccessorMessage.FromString,
+                    response_serializer=chord__pb2.GetDataFromSuccessorMessageResponse.SerializeToString,
             ),
             'NodeFind': grpc.unary_unary_rpc_method_handler(
                     servicer.NodeFind,
@@ -277,57 +282,6 @@ class Service(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def Identify(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/Service/Identify',
-            chord__pb2.IdentifyMessage.SerializeToString,
-            chord__pb2.IdentifyMessageResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def GiveDataToSuccessor(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/Service/GiveDataToSuccessor',
-            chord__pb2.GiveDataToSuccessorMessage.SerializeToString,
-            chord__pb2.GiveDataToSuccessorMessageResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def GetDataFromSuccessor(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/Service/GetDataFromSuccessor',
-            chord__pb2.GetDataFromSuccessorMessage.SerializeToString,
-            chord__pb2.GetDataFromSuccessorMessageResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
     def NodeGetFingerTable(request,
             target,
             options=(),
@@ -375,6 +329,57 @@ class Service(object):
         return grpc.experimental.unary_unary(request, target, '/Service/NodeRemove',
             chord__pb2.RemoveMessage.SerializeToString,
             chord__pb2.RemoveMessageResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def Identify(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/Service/Identify',
+            chord__pb2.IdentifyMessage.SerializeToString,
+            chord__pb2.IdentifyMessageResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GiveDataToSuccessor(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/Service/GiveDataToSuccessor',
+            chord__pb2.GiveDataToSuccessorMessage.SerializeToString,
+            chord__pb2.GiveDataToSuccessorMessageResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetDataFromSuccessor(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/Service/GetDataFromSuccessor',
+            chord__pb2.GetDataFromSuccessorMessage.SerializeToString,
+            chord__pb2.GetDataFromSuccessorMessageResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
