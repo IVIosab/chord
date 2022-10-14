@@ -27,7 +27,7 @@ message RegisterMessage{
     string ipaddr = 1;
     string port = 2;
 }
-//{id: int, m: int} TODO
+//{id: int, m: int}
 message RegisterMessageResponse{
     bool success = 1;
     int32 id = 2;
@@ -141,7 +141,3 @@ message GetDataFromSuccessorMessage{
 message GetDataFromSuccessorMessageResponse{
     repeated Node nodes = 1;
 }
-
-
-//TODO merge get_chord and get_finger messages
-//TODO fix register message response
