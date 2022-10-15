@@ -3,6 +3,7 @@ import chord_pb2_grpc
 import chord_pb2_grpc as pb2_grpc
 import chord_pb2 as pb2
 import grpc
+import os
 import sys
 from concurrent import futures
 
@@ -100,3 +101,4 @@ if __name__ == "__main__":
         server.wait_for_termination()
     except KeyboardInterrupt:
         print("Registry shutting down\n")
+        os._exit(1)

@@ -2,7 +2,7 @@ import grpc
 import chord_pb2 as pb2
 import chord_pb2_grpc as pb2_grpc
 import sys
-
+import os
 
 channel = -1
 stub = -1
@@ -30,7 +30,7 @@ if __name__ == '__main__':
                     print(f'Connection failed\n')
             elif command == 'quit': #quitting client
                 print("Shutting Down\n")
-                sys.exit(0)
+                os._exit(1)
             elif service != "Unknown":
                 if command == "get_info": #get_chord_info || get_finger_table
                     if service == "Node": #get_finger table
@@ -70,6 +70,6 @@ if __name__ == '__main__':
                 print(f'You have to connect to a service first.\n')
         except KeyboardInterrupt:
             print("Terminating\n")
-            sys.exit(0)
+            os._exit(1)
             
 
