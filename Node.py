@@ -1,6 +1,7 @@
 import random
 import sys
 import os
+import time
 import grpc
 import zlib
 import chord_pb2 as pb2
@@ -112,6 +113,28 @@ def get_target(key):
     target_id = hash_value % 2**M
     return target_id
         
+def quit():
+    channel = grpc.insecure_channel(f'{REGISTRY_HOST}:{REGISTRY_PORT}') #connecting to the registry since we will need to populate finger table every second
+    stub = pb2_grpc.ServiceStub(channel)
+    #deregistering from the registry
+    message = pb2.DeregisterMessage(id=ID)
+    response = stub.RegistryDeregister(message)
+    time.sleep(1) #make sure the finger tables get updated
+    #transferring my data to the successor
+    if ID != SUCC:
+        keys = []
+        values = []
+        for item in list(DATA.items()):
+            k = item[0]
+            v = item[1]
+            keys.append(k)
+            values.append(v)
+            del(DATA[k])
+        channel = grpc.insecure_channel(f'{FINGER_TABLE[0][1]}') #connecting with successor
+        stub = pb2_grpc.ServiceStub(channel)
+        message = pb2.GiveDataToSuccessorMessage(keys=keys, values=values)
+        response = stub.GiveDataToSuccessor(message) #giving our data to our successor to keep track of    
+    return response.success
 
 class Handler(pb2_grpc.ServiceServicer):
     def __init__(self, *args, **kwargs):
@@ -328,24 +351,8 @@ def serve():
             print("Unexpected Error: Registry Terminated")
             os._exit(1)
         except KeyboardInterrupt: #terminating the node
-            #deregistering from the registry
-            message = pb2.DeregisterMessage(id=ID)
-            response = stub.RegistryDeregister(message)
-            #transferring my data to the successor
-            if ID != SUCC:
-                keys = []
-                values = []
-                for item in list(DATA.items()):
-                    k = item[0]
-                    v = item[1]
-                    keys.append(k)
-                    values.append(v)
-                    del(DATA[k])
-                channel = grpc.insecure_channel(f'{FINGER_TABLE[0][1]}') #connecting with successor
-                stub = pb2_grpc.ServiceStub(channel)
-                message = pb2.GiveDataToSuccessorMessage(keys=keys, values=values)
-                response = stub.GiveDataToSuccessor(message) #giving our data to our successor to keep track of
-            print("Terminating\n")
+            print("Terminating, Wait 1 second...\n")
+            quit()
             os._exit(1)
 
 if __name__ == "__main__":
